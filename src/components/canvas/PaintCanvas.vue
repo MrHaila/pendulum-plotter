@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import type { Point2D } from '@/types'
 import { A4_WIDTH, A4_HEIGHT, simulationToViewport } from '@/utils/coordinates'
 
@@ -31,12 +31,18 @@ const canvasHeight = baseHeight * dpr
 const displayWidth = baseWidth
 const displayHeight = baseHeight
 
-// Scale points from A4 space to canvas viewport
-const viewportPoints = computed(() => {
-	return props.points.map(p => simulationToViewport(p, canvasWidth, canvasHeight))
-})
+// Track last drawn point count for incremental rendering
+let lastDrawnCount = 0
 
-// Draw paint trail
+// Configure canvas context styles once
+const configureContext = (ctx: CanvasRenderingContext2D) => {
+	ctx.strokeStyle = '#000000'
+	ctx.lineWidth = 2 * dpr
+	ctx.lineCap = 'round'
+	ctx.lineJoin = 'round'
+}
+
+// Draw paint trail incrementally (only new segments)
 const draw = () => {
 	const canvas = canvasRef.value
 	if (!canvas) return
@@ -44,28 +50,39 @@ const draw = () => {
 	const ctx = canvas.getContext('2d')
 	if (!ctx) return
 
-	// Clear canvas
-	ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+	const points = props.points
 
-	// Draw paint trail
-	if (viewportPoints.value.length < 2) return
-
-	ctx.beginPath()
-	ctx.moveTo(viewportPoints.value[0].x, viewportPoints.value[0].y)
-
-	for (let i = 1; i < viewportPoints.value.length; i++) {
-		ctx.lineTo(viewportPoints.value[i].x, viewportPoints.value[i].y)
+	// Full redraw on reset (points array shrunk)
+	if (points.length < lastDrawnCount) {
+		ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+		lastDrawnCount = 0
 	}
 
-	ctx.strokeStyle = '#000000'
-	ctx.lineWidth = 2 * dpr
-	ctx.lineCap = 'round'
-	ctx.lineJoin = 'round'
-	ctx.stroke()
+	// Need at least 2 points to draw
+	if (points.length < 2) return
+
+	// Configure styles once
+	if (lastDrawnCount === 0) {
+		configureContext(ctx)
+	}
+
+	// Draw only new segments
+	const startIdx = Math.max(1, lastDrawnCount)
+	for (let i = startIdx; i < points.length; i++) {
+		const prevPoint = simulationToViewport(points[i - 1], canvasWidth, canvasHeight)
+		const currPoint = simulationToViewport(points[i], canvasWidth, canvasHeight)
+
+		ctx.beginPath()
+		ctx.moveTo(prevPoint.x, prevPoint.y)
+		ctx.lineTo(currPoint.x, currPoint.y)
+		ctx.stroke()
+	}
+
+	lastDrawnCount = points.length
 }
 
 // Redraw when points change
-watch(() => props.points, draw, { deep: true })
+watch(() => props.points.length, draw)
 
 // Initial draw
 onMounted(draw)
