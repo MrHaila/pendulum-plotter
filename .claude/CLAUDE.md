@@ -3,8 +3,9 @@
 ## Code Style
 
 - Vue 3 Composition API with `<script setup lang="ts">`
-- TypeScript strict mode, explicit types for public APIs
+- TypeScript strict mode, explicit types
 - No semicolons, dangling commas (enforced by Prettier)
+- Tailwind CSS v4 for styling (utility-first)
 - Prefer const over let, use functional patterns
 - Component files: PascalCase.vue
 - Utility/core files: camelCase.ts
