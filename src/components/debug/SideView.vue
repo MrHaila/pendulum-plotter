@@ -53,7 +53,7 @@ const draw = () => {
 	ctx.lineTo(centerX + 10, topY)
 	ctx.moveTo(centerX, topY - 10)
 	ctx.lineTo(centerX, topY + 10)
-	ctx.strokeStyle = '#9ca3af'
+	ctx.strokeStyle = '#8d7a65'
 	ctx.lineWidth = 1
 	ctx.stroke()
 
@@ -62,7 +62,7 @@ const draw = () => {
 	ctx.beginPath()
 	ctx.moveTo(0, groundY)
 	ctx.lineTo(size, groundY)
-	ctx.strokeStyle = '#9ca3af'
+	ctx.strokeStyle = '#8d7a65'
 	ctx.lineWidth = 2
 	ctx.setLineDash([5, 5])
 	ctx.stroke()
@@ -75,7 +75,7 @@ const draw = () => {
 	ctx.beginPath()
 	ctx.moveTo(centerX, topY)
 	ctx.lineTo(x, y)
-	ctx.strokeStyle = '#3b82f6'
+	ctx.strokeStyle = '#6b7280'
 	ctx.lineWidth = 2
 	ctx.stroke()
 
@@ -90,7 +90,7 @@ const draw = () => {
 
 	ctx.beginPath()
 	ctx.arc(x, y, bucketRadius, 0, Math.PI * 2)
-	ctx.fillStyle = `hsl(0, 84%, ${lightness}%)`
+	ctx.fillStyle = `hsl(28, 90%, ${lightness}%)`
 	ctx.fill()
 }
 
