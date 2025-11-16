@@ -12,6 +12,7 @@
 				@resume="handleResume"
 				@stop="handleStop"
 				@mode-change="handleModeChange"
+				@export="handleExport"
 			/>
 
 			<!-- Show initial controls when idle/completed, runtime controls when running/paused -->
@@ -42,6 +43,7 @@ import { computed } from 'vue'
 import { useSimulation } from '@/composables/useSimulation'
 import type { SimulationMode } from '@/composables/useSimulation'
 import { sphericalToCartesian } from '@/core/physics'
+import { downloadSVG } from '@/utils/svg'
 import ControlPanel from '@/components/controls/ControlPanel.vue'
 import InitialParameterControls from '@/components/controls/InitialParameterControls.vue'
 import RuntimeParameterControls from '@/components/controls/RuntimeParameterControls.vue'
@@ -128,5 +130,9 @@ const handleModeChange = (newMode: SimulationMode) => {
 
 const handleInitialConfigUpdate = (newConfig: Partial<SimulationConfig>) => {
 	updateInitialConfig(newConfig)
+}
+
+const handleExport = () => {
+	downloadSVG(canvasPoints.value)
 }
 </script>
