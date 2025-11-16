@@ -23,7 +23,7 @@
 
 ---
 
-## Phase 1: Core Physics & Minimal Rendering
+## Phase 1: Core Physics & Minimal Rendering ✓
 
 **Goal:** Working spherical pendulum simulation with basic paint trail visualization.
 
@@ -31,15 +31,15 @@
 
 #### Core Physics (`/src/core`)
 
-- [ ] Define TypeScript types:
+- [x] Define TypeScript types:
   - `PendulumState` (theta, phi, angular velocities, time)
   - `SimulationConfig` (rope length, gravity, damping, timestep)
   - `Vec2`, `Vec3`, `Point2D` geometry types
-- [ ] Implement physics functions:
+- [x] Implement physics functions:
   - `calculateAccelerations()`: Spherical pendulum equations of motion
   - `integrateRK4()`: 4th-order Runge-Kutta numerical integration
   - `sphericalToCartesian()`: Coordinate conversion
-- [ ] Create `PendulumSimulator` class:
+- [x] Create `PendulumSimulator` class:
   - `step()`: Advance simulation by one timestep
   - `reset()`: Reinitialize to initial conditions
   - `getState()`: Return current state
@@ -47,7 +47,7 @@
 
 #### Composables
 
-- [ ] `useSimulation(config)`:
+- [x] `useSimulation(config)`:
   - Wrap `PendulumSimulator` in reactive refs
   - `step()` method
   - `runInstant(steps)` method
@@ -55,16 +55,16 @@
 
 #### Components
 
-- [ ] `App.vue`: Two-column layout, instantiate `useSimulation()`
-- [ ] Minimal `ControlPanel.vue`: Reset button only
-- [ ] `PaintCanvas.vue`:
+- [x] `App.vue`: Two-column layout, instantiate `useSimulation()`
+- [x] Minimal `ControlPanel.vue`: Reset button only
+- [x] `PaintCanvas.vue`:
   - Canvas element with A4 aspect ratio
   - Draw paint points as continuous line
   - Scale A4 simulation space to canvas pixels
 
 #### Utilities
 
-- [ ] `coordinates.ts`:
+- [x] `coordinates.ts`:
   - `sphericalToCartesian()`
   - `groundToCanvas()` (3D ground point → A4 2D)
   - `simulationToViewport()` (A4 → canvas pixels)
@@ -77,7 +77,7 @@
 
 ---
 
-## Phase 2: Diagnostics & Controls
+## Phase 2: Diagnostics & Controls ✓
 
 **Goal:** Add debugging views and parameter controls for exploration.
 
@@ -85,23 +85,23 @@
 
 #### Diagnostic Components
 
-- [ ] `TopDownView.vue`: XZ projection of pendulum position
-- [ ] `SideView.vue`: XY or YZ projection showing vertical motion
-- [ ] `StateDisplay.vue`: Text readout of current theta, phi, velocities, position, time
+- [x] `TopDownView.vue`: XZ projection of pendulum position
+- [x] `SideView.vue`: XY or YZ projection showing vertical motion
+- [x] `StateDisplay.vue`: Text readout of current theta, phi, velocities, position, time
 
 #### Enhanced Controls
 
-- [ ] `ParameterControls.vue`:
+- [x] `ParameterControls.vue`:
   - Sliders for rope length, gravity, damping
   - Sliders for initial theta, phi, angular velocities
   - Display current values next to sliders
-- [ ] Update `ControlPanel.vue` to include parameter controls
+- [x] Update `ControlPanel.vue` to include parameter controls
 
 #### Instant Mode
 
-- [ ] Add "Generate" button and step count input
-- [ ] Call `runInstant(steps)` when clicked
-- [ ] Display final result immediately
+- [x] Add "Generate" button and step count input
+- [x] Call `runInstant(steps)` when clicked
+- [x] Display final result immediately
 
 ### Validation
 
@@ -111,34 +111,27 @@
 
 ---
 
-## Phase 3: Real-time Mode & Debug Canvas
+## Phase 3: Real-time Mode ✓
 
-**Goal:** Animated visualization and overflow debugging.
+**Goal:** Animated visualization with real-time controls.
 
 ### Tasks
 
 #### Real-time Simulation
 
-- [ ] Add mode toggle: Instant / Real-time
-- [ ] Real-time controls: Start, Stop, Pause buttons
-- [ ] `requestAnimationFrame` loop in `App.vue`:
-  - Call `step()` each frame
-  - Limit to reasonable frame rate (e.g., 60fps)
-- [ ] Display elapsed time and frame count
-
-#### Debug Canvas
-
-- [ ] `DebugCanvas.vue`:
-  - Larger canvas showing area beyond A4 bounds
-  - Draw A4 outline
-  - Highlight out-of-bounds paint points in different color
-- [ ] Help user tune parameters to fit artwork within A4
+- [x] Add mode toggle: Instant / Real-time
+- [x] Real-time controls: Start, Stop, Pause, Resume buttons
+- [x] `requestAnimationFrame` loop with 60fps frame rate limiting
+- [x] Separate initial and runtime parameter controls
+- [x] Runtime state visualization with animated progress bars
+- [x] Status tracking (idle, running, paused, completed)
 
 ### Validation
 
 - Watch pendulum swing in real-time
 - Paint trail forms progressively
-- Debug canvas shows overflow, helps with parameter tuning
+- Mode switching works correctly
+- Parameter controls swap based on simulation state
 
 ---
 
@@ -156,21 +149,10 @@
 - [ ] "Export SVG" button in `ControlPanel.vue`
 - [ ] Trigger browser download of SVG file
 
-#### Presets
-
-- [ ] Define preset configurations:
-  - "Circular": Simple circular swing
-  - "Figure-8": Lissajous-like pattern
-  - "Chaotic": High energy, complex motion
-  - "Spiral": Gradually damping inward
-- [ ] Preset selector in `ParameterControls.vue`
-- [ ] Load preset on selection
-
 ### Validation
 
 - SVG file downloads and opens in vector editor (Illustrator, Inkscape)
 - SVG dimensions correct (A4 portrait)
-- Presets produce recognizable patterns
 
 ---
 
@@ -184,31 +166,19 @@
 
 - [ ] Refine component styling:
   - Card-based design with shadows, borders
-  - Consistent spacing and typography
+  - Consistent spacing and typography that prioritizes content over structure (smaller titles, etc.)
   - Color palette (background, text, accents)
 - [ ] Responsive layout:
-  - Stack sidebar above main area on narrow screens
-  - Touch-friendly controls
+  - Block layout on narrow screens with a helpful message.
 
 #### Performance Optimization
 
-- [ ] Profile instant mode for large step counts
 - [ ] Optimize canvas rendering (avoid redrawing full trail each frame)
-- [ ] Consider `Path2D` API or `OffscreenCanvas`
-- [ ] Web worker for instant simulation (if needed)
 
 #### Usability
 
-- [ ] Parameter value presets (buttons for common values)
-- [ ] Undo/redo for parameter changes (optional)
 - [ ] Keyboard shortcuts (Space = start/stop, R = reset, E = export)
-- [ ] Help/info tooltips for parameters
-
-#### Testing
-
-- [ ] Unit tests for core physics functions
-- [ ] Coordinate transformation tests
-- [ ] Visual regression tests (snapshot comparisons)
+- [ ] Help/info for parameters
 
 ### Validation
 
@@ -236,6 +206,6 @@
 
 ## Current Status
 
-**Active Phase:** Phase 0 (complete)
+**Active Phase:** Phase 3 (complete)
 
-**Next Steps:** Begin Phase 1 (core physics implementation)
+**Next Steps:** Begin Phase 4 (SVG Export & Presets)
