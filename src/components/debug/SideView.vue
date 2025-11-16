@@ -85,10 +85,8 @@ const draw = () => {
 	const sizeScale = 1.8 + zNormalized * 0.8 // 1.8 to 2.6 scale
 	const bucketRadius = 6 * sizeScale
 
-	// Darkness based on Y (height): Y-axis points down, so higher Y = closer to ground = darker
-	// Y ranges from ~0 (at suspension) to ropeLength (fully extended down)
-	const yNormalized = Math.max(0, Math.min(1, props.position3D.y / props.ropeLength))
-	const lightness = 80 - yNormalized * 40 // 80% (light, top) to 50% (dark, bottom)
+	// Brightness based on Z (depth) to match size cue: higher Z (closer) = brighter (subtle)
+	const lightness = 50 + zNormalized * 15 // 58% (far) to 72% (close)
 
 	ctx.beginPath()
 	ctx.arc(x, y, bucketRadius, 0, Math.PI * 2)
