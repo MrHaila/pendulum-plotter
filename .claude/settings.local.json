@@ -3,7 +3,11 @@
     "allow": [
       "Bash(pnpm install:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\ninit: project scaffolding and specs\n\n- vite + vue3 + typescript setup\n- eslint + prettier config (no semicolons, dangling commas)\n- directory structure (core, components, composables, utils, types)\n- comprehensive documentation in /docs\n- project instructions in .claude/CLAUDE.md\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\ninit: project scaffolding and specs\n\n- vite + vue3 + typescript setup\n- eslint + prettier config (no semicolons, dangling commas)\n- directory structure (core, components, composables, utils, types)\n- comprehensive documentation in /docs\n- project instructions in .claude/CLAUDE.md\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(pnpm dev)",
+      "Bash(pnpm outdated:*)",
+      "Bash(pnpm update:*)",
+      "Bash(pnpm lint:*)"
     ],
     "deny": [],
     "ask": []
