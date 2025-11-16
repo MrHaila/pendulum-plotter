@@ -11,8 +11,8 @@
 				:class="[
 					'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
 					mode === 'instant'
-						? 'bg-base-0 text-base-900 shadow-sm dark:bg-gradient-to-b dark:from-accent-primary-300 dark:to-accent-primary-500 dark:text-base-0'
-						: 'bg-transparent text-base-500 dark:text-base-400',
+						? 'bg-base-0 text-base-900 shadow-sm dark:bg-linear-to-b from-accent-primary-300 to-accent-primary-500 dark:text-base-0 bg-accent-primary-300'
+						: 'text-base-500 dark:text-base-400 hover:bg-base-0/70 hover:text-base-900 hover:shadow-sm dark:hover:bg-base-600 dark:hover:text-base-100',
 					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
 				]"
 				:aria-pressed="mode === 'instant'"
@@ -26,8 +26,8 @@
 				:class="[
 					'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
 					mode === 'realtime'
-						? 'bg-base-0 text-base-900 shadow-sm dark:bg-gradient-to-b dark:from-accent-primary-300 dark:to-accent-primary-500 dark:text-base-0'
-						: 'bg-transparent text-base-500 dark:text-base-400',
+						? 'bg-base-0 text-base-900 shadow-sm dark:bg-linear-to-b from-accent-primary-300 to-accent-primary-500 dark:text-base-0 bg-accent-primary-300'
+						: 'text-base-500 dark:text-base-400 hover:bg-base-0/70 hover:text-base-900 hover:shadow-sm dark:hover:bg-base-600 dark:hover:text-base-100',
 					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
 				]"
 				:aria-pressed="mode === 'realtime'"
