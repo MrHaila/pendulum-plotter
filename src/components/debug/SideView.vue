@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<h3 class="text-xs font-display font-light tracking-wider uppercase mb-3 text-base-500 dark:text-base-400">
-			Planar Projection: XY
-		</h3>
 		<div ref="containerRef" class="w-full">
 			<canvas
 				ref="canvasRef"

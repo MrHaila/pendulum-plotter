@@ -8,38 +8,40 @@
 				{{ displayLabel }}
 			</label>
 
-			<!-- Start Trim -->
-			<div class="mb-2">
-				<label
-					class="block text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400 mb-1"
-					>Start Point</label
-				>
-				<input
-					:value="props.trimStart"
-					type="number"
-					:min="0"
-					:max="Math.max(0, pointCount - 1)"
-					:disabled="disabled || pointCount === 0"
-					class="w-full px-2 py-1.5 text-sm font-mono font-light bg-base-100 dark:bg-base-800 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md text-base-800 dark:text-base-100 focus:outline-none focus:ring-4 focus:ring-[rgba(255,209,149,0.08)] focus:border-accent-primary-500/90 disabled:bg-base-200 dark:disabled:bg-base-700 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-120"
-					@input="updateStart"
-				/>
-			</div>
+			<div class="grid grid-cols-2 gap-3">
+				<!-- Start Trim -->
+				<div>
+					<label
+						class="block text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400 mb-1"
+						>Start Point</label
+					>
+					<input
+						:value="props.trimStart"
+						type="number"
+						:min="0"
+						:max="Math.max(0, pointCount - 1)"
+						:disabled="disabled || pointCount === 0"
+						class="w-full px-2 py-1.5 text-sm font-mono font-light bg-base-100 dark:bg-base-800 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md text-base-800 dark:text-base-100 focus:outline-none focus:ring-4 focus:ring-[rgba(255,209,149,0.08)] focus:border-accent-primary-500/90 disabled:bg-base-200 dark:disabled:bg-base-700 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-120"
+						@input="updateStart"
+					/>
+				</div>
 
-			<!-- End Trim -->
-			<div>
-				<label
-					class="block text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400 mb-1"
-					>End Point</label
-				>
-				<input
-					:value="props.trimEnd"
-					type="number"
-					:min="0"
-					:max="Math.max(0, pointCount)"
-					:disabled="disabled || pointCount === 0"
-					class="w-full px-2 py-1.5 text-sm font-mono font-light bg-base-100 dark:bg-base-800 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md text-base-800 dark:text-base-100 focus:outline-none focus:ring-4 focus:ring-[rgba(255,209,149,0.08)] focus:border-accent-primary-500/90 disabled:bg-base-200 dark:disabled:bg-base-700 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-120"
-					@input="updateEnd"
-				/>
+				<!-- End Trim -->
+				<div>
+					<label
+						class="block text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400 mb-1"
+						>End Point</label
+					>
+					<input
+						:value="props.trimEnd"
+						type="number"
+						:min="0"
+						:max="Math.max(0, pointCount)"
+						:disabled="disabled || pointCount === 0"
+						class="w-full px-2 py-1.5 text-sm font-mono font-light bg-base-100 dark:bg-base-800 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md text-base-800 dark:text-base-100 focus:outline-none focus:ring-4 focus:ring-[rgba(255,209,149,0.08)] focus:border-accent-primary-500/90 disabled:bg-base-200 dark:disabled:bg-base-700 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-120"
+						@input="updateEnd"
+					/>
+				</div>
 			</div>
 		</div>
 
