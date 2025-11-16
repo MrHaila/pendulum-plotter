@@ -1,4 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@200;300;400;500&display=swap');
 @import "tailwindcss";
+
+@variant dark (&:is(.dark *));
+
+@theme {
+  /* Base warm grey palette */
+  --color-base-50: #faf7f3;
+  --color-base-100: #f3efe9;
+  --color-base-200: #e7dfd5;
+  --color-base-400: #b8a691;
+  --color-base-500: #8d7a65;
+  --color-base-700: #5a4835;
+  --color-base-800: #453627;
+  --color-base-900: #2b2014;
+
+  /* Accent colors - primary (action/interactive) */
+  --color-accent-primary-300: #ffb85c;
+  --color-accent-primary-500: #ff9b20;
+  --color-accent-primary-700: #d67d14;
+
+  /* Accent colors - secondary (info/diagnostics) */
+  --color-accent-secondary-300: #cda78c;
+  --color-accent-secondary-500: #a8765e;
+  --color-accent-secondary-700: #8a5d47;
+
+  /* Font families */
+  --font-family-display: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-family-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Font sizes - override text-xs to 10px for UI labels */
+  --font-size-xs: 10px;
+}
 
 #app {
   width: 100vw;

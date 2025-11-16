@@ -3,11 +3,20 @@
 	<NarrowScreenMessage v-if="isTooNarrow" :current-width="windowWidth" :min-width="minWidth" />
 
 	<!-- Main application layout -->
-	<div v-else class="flex h-full">
+	<div v-else class="flex h-full bg-base-50 dark:bg-base-900">
 		<!-- Left Sidebar -->
-		<aside class="w-80 border-r border-gray-200 bg-gray-50 overflow-y-auto p-4 space-y-0">
+		<aside
+			class="w-80 border-r border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] bg-base-100 dark:bg-base-800 overflow-y-auto p-3 space-y-0"
+		>
+			<!-- Dark Mode Toggle -->
+			<div class="pb-3 flex justify-end">
+				<DarkModeToggle />
+			</div>
+
+			<div class="border-t border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)]" />
+
 			<!-- Parameters Section (always visible) -->
-			<div class="pb-4">
+			<div class="pb-3 pt-3">
 				<InitialParameterControls
 					:config="initialConfig"
 					:disabled="status === 'running'"
@@ -15,10 +24,10 @@
 				/>
 			</div>
 
-			<div class="border-t border-gray-300" />
+			<div class="border-t border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)]" />
 
 			<!-- Simulation Controls Section -->
-			<div class="py-4">
+			<div class="py-3">
 				<ControlPanel
 					:mode="mode"
 					:status="status"
@@ -31,10 +40,10 @@
 				/>
 			</div>
 
-			<div class="border-t border-gray-300" />
+			<div class="border-t border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)]" />
 
 			<!-- Export Section -->
-			<div class="py-4">
+			<div class="py-3">
 				<ExportPanel
 					:point-count="pointCount"
 					:trim-start="trimStart"
@@ -48,41 +57,58 @@
 		</aside>
 
 		<!-- Main Canvas Area -->
-		<main class="flex-1 flex items-center justify-center p-8 bg-white relative">
+		<main class="flex-1 flex items-center justify-center p-8 bg-base-50 dark:bg-base-900 relative">
 			<RawDataDisplay :points="trimmedCanvasPoints" />
 			<PaintCanvas :points="trimmedCanvasPoints" />
 		</main>
 
 		<!-- Right Diagnostics -->
-		<aside class="w-80 border-l border-gray-200 bg-gray-50 overflow-y-auto p-4 space-y-0">
+		<aside
+			class="w-80 border-l border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] bg-base-100 dark:bg-base-800 overflow-y-auto p-3 space-y-0"
+		>
 			<!-- Runtime Stats Section -->
-			<div class="pb-4">
-				<h3 class="text-sm font-semibold mb-3 text-gray-700">Runtime Stats</h3>
+			<div class="pb-3">
+				<h3 class="text-xs font-display font-light tracking-wider uppercase mb-3 text-base-500 dark:text-base-400">
+					Spatio-Temporal Analysis
+				</h3>
 				<div class="space-y-3">
 					<!-- Time -->
 					<div>
-						<label class="block text-xs font-medium text-gray-700 mb-1">Elapsed Time</label>
-						<div class="text-lg font-mono font-semibold text-gray-800">{{ state.time.toFixed(2) }}s</div>
+						<label
+							class="block text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400 mb-1"
+							>Elapsed Time</label
+						>
+						<div class="text-base font-mono font-light text-base-800 dark:text-base-100">
+							{{ state.time.toFixed(2) }}s
+						</div>
 					</div>
 
 					<!-- Point Count -->
 					<div>
-						<label class="block text-xs font-medium text-gray-700 mb-1">Points Generated</label>
-						<div class="text-sm font-mono text-gray-700">
+						<label
+							class="block text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400 mb-1"
+							>Points Generated</label
+						>
+						<div class="text-sm font-mono font-light text-base-800 dark:text-base-100">
 							{{ state.time === 0 ? '0' : pointCount.toLocaleString() }}
 						</div>
 					</div>
 
 					<!-- Current State -->
-					<div class="pt-2 border-t border-gray-300">
-						<label class="block text-xs font-medium text-gray-700 mb-2">Current State</label>
+					<div class="pt-2 border-t border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)]">
+						<label
+							class="block text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400 mb-2"
+							>Current State</label
+						>
 						<div class="space-y-2">
 							<!-- Theta -->
 							<div>
-								<div class="text-xs font-mono text-gray-600 mb-1">θ: {{ state.theta.toFixed(3) }} rad</div>
-								<div class="h-1.5 bg-blue-200 rounded-full overflow-hidden">
+								<div class="text-xs font-mono font-light text-base-500 dark:text-base-400 mb-1">
+									θ: {{ state.theta.toFixed(3) }} rad
+								</div>
+								<div class="h-1.5 bg-base-200 dark:bg-base-700 rounded-full overflow-hidden">
 									<div
-										class="h-full bg-blue-500 transition-all duration-100"
+										class="h-full bg-accent-primary-500 transition-all duration-100"
 										:style="{ width: `${((state.theta + Math.PI) / (2 * Math.PI)) * 100}%` }"
 									/>
 								</div>
@@ -90,10 +116,12 @@
 
 							<!-- Phi -->
 							<div>
-								<div class="text-xs font-mono text-gray-600 mb-1">φ: {{ state.phi.toFixed(3) }} rad</div>
-								<div class="h-1.5 bg-purple-200 rounded-full overflow-hidden">
+								<div class="text-xs font-mono font-light text-base-500 dark:text-base-400 mb-1">
+									φ: {{ state.phi.toFixed(3) }} rad
+								</div>
+								<div class="h-1.5 bg-base-200 dark:bg-base-700 rounded-full overflow-hidden">
 									<div
-										class="h-full bg-purple-500 transition-all duration-100"
+										class="h-full bg-accent-primary-500 transition-all duration-100"
 										:style="{ width: `${(state.phi / Math.PI) * 100}%` }"
 									/>
 								</div>
@@ -101,10 +129,12 @@
 
 							<!-- Theta Dot -->
 							<div>
-								<div class="text-xs font-mono text-gray-600 mb-1">θ̇: {{ state.thetaDot.toFixed(3) }} rad/s</div>
-								<div class="h-1.5 bg-green-200 rounded-full overflow-hidden">
+								<div class="text-xs font-mono font-light text-base-500 dark:text-base-400 mb-1">
+									θ̇: {{ state.thetaDot.toFixed(3) }} rad/s
+								</div>
+								<div class="h-1.5 bg-base-200 dark:bg-base-700 rounded-full overflow-hidden">
 									<div
-										class="h-full bg-green-500 transition-all duration-100"
+										class="h-full bg-accent-secondary-500 dark:bg-accent-secondary-300 transition-all duration-100"
 										:style="{ width: `${Math.min((Math.abs(state.thetaDot) / 10) * 100, 100)}%` }"
 									/>
 								</div>
@@ -112,10 +142,12 @@
 
 							<!-- Phi Dot -->
 							<div>
-								<div class="text-xs font-mono text-gray-600 mb-1">φ̇: {{ state.phiDot.toFixed(3) }} rad/s</div>
-								<div class="h-1.5 bg-yellow-200 rounded-full overflow-hidden">
+								<div class="text-xs font-mono font-light text-base-500 dark:text-base-400 mb-1">
+									φ̇: {{ state.phiDot.toFixed(3) }} rad/s
+								</div>
+								<div class="h-1.5 bg-base-200 dark:bg-base-700 rounded-full overflow-hidden">
 									<div
-										class="h-full bg-yellow-500 transition-all duration-100"
+										class="h-full bg-accent-secondary-500 dark:bg-accent-secondary-300 transition-all duration-100"
 										:style="{ width: `${Math.min((Math.abs(state.phiDot) / 10) * 100, 100)}%` }"
 									/>
 								</div>
@@ -125,10 +157,10 @@
 				</div>
 			</div>
 
-			<div class="border-t border-gray-300" />
+			<div class="border-t border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)]" />
 
 			<!-- Top-Down View Section -->
-			<div class="py-4">
+			<div class="py-3">
 				<TopDownView
 					:position="currentGroundPosition"
 					:position3-d="current3DPosition"
@@ -136,10 +168,10 @@
 				/>
 			</div>
 
-			<div class="border-t border-gray-300" />
+			<div class="border-t border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)]" />
 
 			<!-- Side View Section -->
-			<div class="py-4">
+			<div class="py-3">
 				<SideView :position3-d="current3DPosition" :rope-length="currentRopeLength" />
 			</div>
 		</aside>
@@ -156,6 +188,7 @@ import { downloadSVG } from '@/utils/svg'
 import ControlPanel from '@/components/controls/ControlPanel.vue'
 import InitialParameterControls from '@/components/controls/InitialParameterControls.vue'
 import ExportPanel from '@/components/controls/ExportPanel.vue'
+import DarkModeToggle from '@/components/controls/DarkModeToggle.vue'
 import PaintCanvas from '@/components/canvas/PaintCanvas.vue'
 import TopDownView from '@/components/debug/TopDownView.vue'
 import SideView from '@/components/debug/SideView.vue'

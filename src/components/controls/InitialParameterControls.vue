@@ -1,13 +1,20 @@
 <template>
 	<div>
-		<h3 class="text-sm font-semibold mb-3 text-gray-700">Parameters</h3>
+		<h3 class="text-xs font-display font-light tracking-wider uppercase mb-3 text-base-500 dark:text-base-400">
+			Reality Configuration
+		</h3>
 
-		<div class="space-y-4">
+		<div class="space-y-3">
 			<!-- Rope Length -->
 			<div>
-				<label class="block text-xs font-medium text-gray-600 mb-1">
-					Rope Length: {{ localConfig.ropeLength.toFixed(2) }}m
-				</label>
+				<div class="flex justify-between items-baseline mb-1">
+					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+						Suspension Radius
+					</label>
+					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
+						>{{ localConfig.ropeLength.toFixed(2) }} m</span
+					>
+				</div>
 				<input
 					v-model.number="localConfig.ropeLength"
 					type="range"
@@ -15,16 +22,21 @@
 					max="2"
 					step="0.1"
 					:disabled="disabled"
-					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
+					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@change="emitUpdate"
 				/>
 			</div>
 
 			<!-- Gravity -->
 			<div>
-				<label class="block text-xs font-medium text-gray-600 mb-1">
-					Gravity: {{ localConfig.gravity.toFixed(2) }}m/s²
-				</label>
+				<div class="flex justify-between items-baseline mb-1">
+					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+						Gravitational Coefficient
+					</label>
+					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
+						>{{ localConfig.gravity.toFixed(2) }} m/s²</span
+					>
+				</div>
 				<input
 					v-model.number="localConfig.gravity"
 					type="range"
@@ -32,16 +44,21 @@
 					max="20"
 					step="0.5"
 					:disabled="disabled"
-					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
+					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@change="emitUpdate"
 				/>
 			</div>
 
 			<!-- Damping -->
 			<div>
-				<label class="block text-xs font-medium text-gray-600 mb-1">
-					Damping: {{ localConfig.damping.toFixed(3) }}
-				</label>
+				<div class="flex justify-between items-baseline mb-1">
+					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+						Dissipative Friction Factor
+					</label>
+					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100">{{
+						localConfig.damping.toFixed(3)
+					}}</span>
+				</div>
 				<input
 					v-model.number="localConfig.damping"
 					type="range"
@@ -49,16 +66,21 @@
 					max="0.1"
 					step="0.001"
 					:disabled="disabled"
-					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
+					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@change="emitUpdate"
 				/>
 			</div>
 
 			<!-- Initial Theta -->
 			<div>
-				<label class="block text-xs font-medium text-gray-600 mb-1">
-					Initial θ: {{ localConfig.initialTheta.toFixed(2) }} rad
-				</label>
+				<div class="flex justify-between items-baseline mb-1">
+					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+						Initial Angle θ
+					</label>
+					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
+						>{{ localConfig.initialTheta.toFixed(2) }} rad</span
+					>
+				</div>
 				<input
 					v-model.number="localConfig.initialTheta"
 					type="range"
@@ -66,16 +88,21 @@
 					max="3.14"
 					step="0.1"
 					:disabled="disabled"
-					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
+					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@change="emitUpdate"
 				/>
 			</div>
 
 			<!-- Initial Phi -->
 			<div>
-				<label class="block text-xs font-medium text-gray-600 mb-1">
-					Initial φ: {{ localConfig.initialPhi.toFixed(2) }} rad
-				</label>
+				<div class="flex justify-between items-baseline mb-1">
+					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+						Initial Angle φ
+					</label>
+					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
+						>{{ localConfig.initialPhi.toFixed(2) }} rad</span
+					>
+				</div>
 				<input
 					v-model.number="localConfig.initialPhi"
 					type="range"
@@ -83,16 +110,21 @@
 					max="1.57"
 					step="0.1"
 					:disabled="disabled"
-					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
+					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@change="emitUpdate"
 				/>
 			</div>
 
 			<!-- Initial Theta Dot -->
 			<div>
-				<label class="block text-xs font-medium text-gray-600 mb-1">
-					Initial θ̇: {{ localConfig.initialThetaDot.toFixed(2) }} rad/s
-				</label>
+				<div class="flex justify-between items-baseline mb-1">
+					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+						Initial Velocity θ̇
+					</label>
+					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
+						>{{ localConfig.initialThetaDot.toFixed(2) }} rad/s</span
+					>
+				</div>
 				<input
 					v-model.number="localConfig.initialThetaDot"
 					type="range"
@@ -100,16 +132,21 @@
 					max="5"
 					step="0.1"
 					:disabled="disabled"
-					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
+					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@change="emitUpdate"
 				/>
 			</div>
 
 			<!-- Initial Phi Dot -->
 			<div>
-				<label class="block text-xs font-medium text-gray-600 mb-1">
-					Initial φ̇: {{ localConfig.initialPhiDot.toFixed(2) }} rad/s
-				</label>
+				<div class="flex justify-between items-baseline mb-1">
+					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+						Initial Velocity φ̇
+					</label>
+					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
+						>{{ localConfig.initialPhiDot.toFixed(2) }} rad/s</span
+					>
+				</div>
 				<input
 					v-model.number="localConfig.initialPhiDot"
 					type="range"
@@ -117,7 +154,7 @@
 					max="5"
 					step="0.1"
 					:disabled="disabled"
-					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
+					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@change="emitUpdate"
 				/>
 			</div>

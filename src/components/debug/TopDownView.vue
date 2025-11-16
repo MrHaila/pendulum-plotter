@@ -1,12 +1,14 @@
 <template>
 	<div>
-		<h3 class="text-sm font-semibold mb-3 text-gray-700">Top-Down View (XZ)</h3>
+		<h3 class="text-xs font-display font-light tracking-wider uppercase mb-3 text-base-500 dark:text-base-400">
+			Planar Projection: XZ
+		</h3>
 		<div ref="containerRef" class="w-full">
 			<canvas
 				ref="canvasRef"
 				:width="canvasSize"
 				:height="canvasSize"
-				class="border border-gray-300 bg-gray-50 w-full"
+				class="border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] bg-base-100 dark:bg-base-800 w-full rounded-lg shadow-[0_1px_3px_rgba(69,40,20,0.08)]"
 				:style="{ aspectRatio: '1' }"
 			/>
 		</div>

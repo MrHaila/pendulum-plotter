@@ -4,7 +4,7 @@
 			ref="canvasRef"
 			:width="canvasWidth"
 			:height="canvasHeight"
-			class="border border-gray-300 shadow-lg bg-white"
+			class="border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] shadow-[0_4px_8px_rgba(69,40,20,0.1),0_2px_4px_rgba(69,40,20,0.06)] rounded-lg canvas-paper"
 			:style="{ width: displayWidth + 'px', height: displayHeight + 'px' }"
 		/>
 	</div>
@@ -36,7 +36,9 @@ let lastDrawnCount = 0
 
 // Configure canvas context styles once
 const configureContext = (ctx: CanvasRenderingContext2D) => {
-	ctx.strokeStyle = '#000000'
+	// Stroke color adapts to theme: charcoal in light mode, warm light in dark mode
+	const isDark = document.documentElement.classList.contains('dark')
+	ctx.strokeStyle = isDark ? '#b8a691' : '#2b2014' // base-400 in dark, base-900 in light
 	ctx.lineWidth = 2 * dpr
 	ctx.lineCap = 'round'
 	ctx.lineJoin = 'round'
@@ -87,3 +89,19 @@ watch(() => props.points.length, draw)
 // Initial draw
 onMounted(draw)
 </script>
+
+<style scoped>
+.canvas-paper {
+	background:
+		linear-gradient(135deg, #fdfcfb 0%, #f7f4ef 100%),
+		url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+	background-blend-mode: normal, multiply;
+}
+
+html.dark .canvas-paper {
+	background:
+		linear-gradient(135deg, #2b2014 0%, #1f1810 100%),
+		url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+	background-blend-mode: normal, overlay;
+}
+</style>

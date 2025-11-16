@@ -5,7 +5,7 @@
 				<div
 					v-for="(point, index) in points.slice(1)"
 					:key="index"
-					class="font-mono text-[7px] text-gray-300 min-h-[20px]"
+					class="font-mono text-[7px] text-base-400/30 dark:text-base-500/20 min-h-[20px]"
 				>
 					{{ point.x.toFixed(2) }}, {{ point.y.toFixed(2) }}
 				</div>
