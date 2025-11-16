@@ -1,9 +1,6 @@
 <template>
 	<div class="absolute inset-0 overflow-hidden pointer-events-none p-2 select-none">
-		<div
-			ref="gridContainer"
-			class="h-full overflow-y-hidden"
-		>
+		<div ref="gridContainer" class="h-full overflow-y-hidden">
 			<div class="grid gap-0.5" style="grid-template-columns: repeat(auto-fit, minmax(70px, 1fr))">
 				<div
 					v-for="(point, index) in points.slice(1)"
@@ -35,6 +32,6 @@ watch(
 				gridContainer.value.scrollTop = gridContainer.value.scrollHeight
 			}
 		})
-	}
+	},
 )
 </script>

@@ -1,6 +1,6 @@
 <template>
-	<div class="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-		<h3 class="text-sm font-semibold mb-3 text-gray-700">Initial Parameters</h3>
+	<div>
+		<h3 class="text-sm font-semibold mb-3 text-gray-700">Parameters</h3>
 
 		<div class="space-y-4">
 			<!-- Rope Length -->

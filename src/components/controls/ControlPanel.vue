@@ -1,6 +1,6 @@
 <template>
-	<div class="p-4 bg-white rounded-lg shadow-sm border border-gray-200 space-y-4">
-		<h3 class="text-sm font-semibold text-gray-700">Controls</h3>
+	<div class="space-y-3">
+		<h3 class="text-sm font-semibold text-gray-700">Simulation</h3>
 
 		<!-- Mode Toggle -->
 		<div class="flex gap-2">
@@ -75,36 +75,15 @@
 				Pause
 			</button>
 
-			<!-- Stop Button -->
+			<!-- Reset Button (always visible) -->
 			<button
-				v-if="status === 'running' || status === 'paused'"
-				class="w-full px-4 py-2 text-sm bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-				@click="$emit('stop')"
+				class="w-full px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+				:disabled="status === 'running'"
+				@click="$emit('reset')"
 			>
-				Stop
+				Reset
 			</button>
 		</div>
-
-		<!-- Export SVG Button -->
-		<button
-			class="w-full px-4 py-2 text-sm bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-			:disabled="status === 'running' || status === 'idle'"
-			@click="$emit('export')"
-		>
-			Export SVG
-		</button>
-
-		<!-- Reset Button (always visible) -->
-		<button
-			class="w-full px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-			:disabled="status === 'running'"
-			@click="$emit('reset')"
-		>
-			Reset
-		</button>
-
-		<!-- Status Indicator -->
-		<div class="text-xs text-gray-500 text-center font-mono">Status: {{ status }}</div>
 	</div>
 </template>
 
@@ -123,9 +102,7 @@ const emit = defineEmits<{
 	start: []
 	pause: []
 	resume: []
-	stop: []
 	'mode-change': [mode: SimulationMode]
-	export: []
 }>()
 
 const steps = ref(5000)

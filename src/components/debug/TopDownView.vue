@@ -1,5 +1,5 @@
 <template>
-	<div class="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+	<div>
 		<h3 class="text-sm font-semibold mb-3 text-gray-700">Top-Down View (XZ)</h3>
 		<canvas
 			ref="canvasRef"
