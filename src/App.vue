@@ -9,9 +9,9 @@
 			class="w-80 flex-none border-r border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] bg-base-100 dark:bg-base-800 p-3 space-y-0 flex flex-col"
 		>
 			<div class="flex-1 overflow-y-auto pr-1 space-y-6">
-				<!-- Parameters Section (always visible) -->
+				<!-- Parameters Section -->
 				<section class="space-y-3">
-					<SidebarSectionHeader label="Reality Configuration" />
+					<SidebarSectionHeader label="Experiment Parameters" />
 					<InitialParameterControls
 						:config="initialConfig"
 						:disabled="status === 'running'"
@@ -21,7 +21,7 @@
 
 				<!-- Simulation Controls Section -->
 				<section class="space-y-3">
-					<SidebarSectionHeader label="Simulation Controls" />
+					<SidebarSectionHeader label="Time Simulation" />
 					<ControlPanel
 						:mode="mode"
 						:status="status"
