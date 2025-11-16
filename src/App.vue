@@ -35,14 +35,22 @@
 
 			<!-- Export Section -->
 			<div class="py-4">
-				<ExportControls :disabled="status === 'running' || status === 'idle'" @export="handleExport" />
+				<ExportPanel
+					:point-count="pointCount"
+					:trim-start="trimStart"
+					:trim-end="trimEnd"
+					:disabled="status === 'running' || status === 'idle'"
+					@update:trim-start="handleTrimStartUpdate"
+					@update:trim-end="handleTrimEndUpdate"
+					@export="handleExport"
+				/>
 			</div>
 		</aside>
 
 		<!-- Main Canvas Area -->
 		<main class="flex-1 flex items-center justify-center p-8 bg-white relative">
-			<RawDataDisplay :points="canvasPoints" />
-			<PaintCanvas :points="canvasPoints" />
+			<RawDataDisplay :points="trimmedCanvasPoints" />
+			<PaintCanvas :points="trimmedCanvasPoints" />
 		</main>
 
 		<!-- Right Diagnostics -->
@@ -135,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useSimulation } from '@/composables/useSimulation'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import type { SimulationMode } from '@/composables/useSimulation'
@@ -143,7 +151,7 @@ import { sphericalToCartesian } from '@/core/physics'
 import { downloadSVG } from '@/utils/svg'
 import ControlPanel from '@/components/controls/ControlPanel.vue'
 import InitialParameterControls from '@/components/controls/InitialParameterControls.vue'
-import ExportControls from '@/components/controls/ExportControls.vue'
+import ExportPanel from '@/components/controls/ExportPanel.vue'
 import PaintCanvas from '@/components/canvas/PaintCanvas.vue'
 import TopDownView from '@/components/debug/TopDownView.vue'
 import SideView from '@/components/debug/SideView.vue'
@@ -184,6 +192,21 @@ const {
 
 // Point count for stats
 const pointCount = computed(() => paintPoints.value.length)
+
+// Trim controls for export
+const trimStart = ref(0)
+const trimEnd = ref(0)
+
+// Reset trim to full range when pointCount changes (new simulation)
+watch(pointCount, newCount => {
+	trimStart.value = 0
+	trimEnd.value = newCount
+})
+
+// Trimmed canvas points for display and export
+const trimmedCanvasPoints = computed(() => {
+	return canvasPoints.value.slice(trimStart.value, trimEnd.value)
+})
 
 // Current rope length (from initial config)
 const currentRopeLength = computed(() => initialConfig.value.ropeLength)
@@ -232,7 +255,15 @@ const handleInitialConfigUpdate = (newConfig: Partial<SimulationConfig>) => {
 	updateInitialConfig(newConfig)
 }
 
+const handleTrimStartUpdate = (value: number) => {
+	trimStart.value = value
+}
+
+const handleTrimEndUpdate = (value: number) => {
+	trimEnd.value = value
+}
+
 const handleExport = () => {
-	downloadSVG(canvasPoints.value)
+	downloadSVG(trimmedCanvasPoints.value)
 }
 </script>
