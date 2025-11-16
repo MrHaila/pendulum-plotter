@@ -146,6 +146,12 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		if (newConfig.ropeLength !== undefined) {
 			bounds.value = calculateBounds(newConfig.ropeLength)
 		}
+		// Reset simulator to reflect new initial conditions and set status to idle
+		stop()
+		simulator.reset()
+		state.value = simulator.getState()
+		paintPoints.value = [...simulator.getPaintPoints()]
+		status.value = 'idle'
 	}
 
 	/**

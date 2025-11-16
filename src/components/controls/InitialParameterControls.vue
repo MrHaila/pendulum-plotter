@@ -14,7 +14,8 @@
 					min="0.5"
 					max="2"
 					step="0.1"
-					class="w-full"
+					:disabled="disabled"
+					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
 					@change="emitUpdate"
 				/>
 			</div>
@@ -30,7 +31,8 @@
 					min="1"
 					max="20"
 					step="0.5"
-					class="w-full"
+					:disabled="disabled"
+					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
 					@change="emitUpdate"
 				/>
 			</div>
@@ -46,7 +48,8 @@
 					min="0"
 					max="0.1"
 					step="0.001"
-					class="w-full"
+					:disabled="disabled"
+					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
 					@change="emitUpdate"
 				/>
 			</div>
@@ -62,7 +65,8 @@
 					min="-3.14"
 					max="3.14"
 					step="0.1"
-					class="w-full"
+					:disabled="disabled"
+					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
 					@change="emitUpdate"
 				/>
 			</div>
@@ -78,7 +82,8 @@
 					min="0"
 					max="1.57"
 					step="0.1"
-					class="w-full"
+					:disabled="disabled"
+					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
 					@change="emitUpdate"
 				/>
 			</div>
@@ -94,7 +99,8 @@
 					min="-5"
 					max="5"
 					step="0.1"
-					class="w-full"
+					:disabled="disabled"
+					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
 					@change="emitUpdate"
 				/>
 			</div>
@@ -110,7 +116,8 @@
 					min="-5"
 					max="5"
 					step="0.1"
-					class="w-full"
+					:disabled="disabled"
+					class="w-full disabled:opacity-50 disabled:cursor-not-allowed"
 					@change="emitUpdate"
 				/>
 			</div>
@@ -124,6 +131,7 @@ import type { SimulationConfig } from '@/types'
 
 const props = defineProps<{
 	config: SimulationConfig
+	disabled?: boolean
 }>()
 
 const emit = defineEmits<{

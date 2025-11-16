@@ -8,7 +8,11 @@
 		<aside class="w-80 border-r border-gray-200 bg-gray-50 overflow-y-auto p-4 space-y-0">
 			<!-- Parameters Section (always visible) -->
 			<div class="pb-4">
-				<InitialParameterControls :config="initialConfig" @update="handleInitialConfigUpdate" />
+				<InitialParameterControls
+					:config="initialConfig"
+					:disabled="status === 'running'"
+					@update="handleInitialConfigUpdate"
+				/>
 			</div>
 
 			<div class="border-t border-gray-300" />
@@ -200,6 +204,7 @@ const handleReset = () => {
 }
 
 const handleGenerate = (steps: number) => {
+	reset()
 	runInstant(steps)
 }
 
