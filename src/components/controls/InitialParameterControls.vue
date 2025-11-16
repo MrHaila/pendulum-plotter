@@ -1,9 +1,5 @@
 <template>
 	<div>
-		<h3 class="text-xs font-display font-light tracking-wider uppercase mb-3 text-base-500 dark:text-base-400">
-			Reality Configuration
-		</h3>
-
 		<div class="space-y-3">
 			<!-- Rope Length -->
 			<div>

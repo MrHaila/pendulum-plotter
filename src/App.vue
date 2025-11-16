@@ -6,53 +6,56 @@
 	<div v-else class="flex h-full bg-base-50 dark:bg-base-900">
 		<!-- Left Sidebar -->
 		<aside
-			class="w-80 border-r border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] bg-base-100 dark:bg-base-800 overflow-y-auto p-3 space-y-0"
+			class="w-80 border-r border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] bg-base-100 dark:bg-base-800 p-3 space-y-0 flex flex-col"
 		>
-			<!-- Dark Mode Toggle -->
-			<div class="pb-3 flex justify-end">
+			<div class="flex-1 overflow-y-auto pr-1 space-y-6">
+				<!-- Parameters Section (always visible) -->
+				<section>
+					<SidebarSectionHeader label="Reality Configuration" />
+					<div class="mt-3">
+						<InitialParameterControls
+							:config="initialConfig"
+							:disabled="status === 'running'"
+							@update="handleInitialConfigUpdate"
+						/>
+					</div>
+				</section>
+
+				<!-- Simulation Controls Section -->
+				<section>
+					<SidebarSectionHeader label="Simulation Controls" />
+					<div class="mt-3">
+						<ControlPanel
+							:mode="mode"
+							:status="status"
+							@reset="handleReset"
+							@generate="handleGenerate"
+							@start="handleStart"
+							@pause="handlePause"
+							@resume="handleResume"
+							@mode-change="handleModeChange"
+						/>
+					</div>
+				</section>
+
+				<!-- Export Section -->
+				<section>
+					<SidebarSectionHeader label="Export" />
+					<div class="mt-3">
+						<ExportPanel
+							:point-count="pointCount"
+							:trim-start="trimStart"
+							:trim-end="trimEnd"
+							:disabled="status === 'running' || status === 'idle'"
+							@update:trim-start="handleTrimStartUpdate"
+							@update:trim-end="handleTrimEndUpdate"
+							@export="handleExport"
+						/>
+					</div>
+				</section>
+			</div>
+			<div class="pt-4">
 				<DarkModeToggle />
-			</div>
-
-			<div class="border-t border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)]" />
-
-			<!-- Parameters Section (always visible) -->
-			<div class="pb-3 pt-3">
-				<InitialParameterControls
-					:config="initialConfig"
-					:disabled="status === 'running'"
-					@update="handleInitialConfigUpdate"
-				/>
-			</div>
-
-			<div class="border-t border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)]" />
-
-			<!-- Simulation Controls Section -->
-			<div class="py-3">
-				<ControlPanel
-					:mode="mode"
-					:status="status"
-					@reset="handleReset"
-					@generate="handleGenerate"
-					@start="handleStart"
-					@pause="handlePause"
-					@resume="handleResume"
-					@mode-change="handleModeChange"
-				/>
-			</div>
-
-			<div class="border-t border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)]" />
-
-			<!-- Export Section -->
-			<div class="py-3">
-				<ExportPanel
-					:point-count="pointCount"
-					:trim-start="trimStart"
-					:trim-end="trimEnd"
-					:disabled="status === 'running' || status === 'idle'"
-					@update:trim-start="handleTrimStartUpdate"
-					@update:trim-end="handleTrimEndUpdate"
-					@export="handleExport"
-				/>
 			</div>
 		</aside>
 
@@ -189,6 +192,7 @@ import ControlPanel from '@/components/controls/ControlPanel.vue'
 import InitialParameterControls from '@/components/controls/InitialParameterControls.vue'
 import ExportPanel from '@/components/controls/ExportPanel.vue'
 import DarkModeToggle from '@/components/controls/DarkModeToggle.vue'
+import SidebarSectionHeader from '@/components/controls/SidebarSectionHeader.vue'
 import PaintCanvas from '@/components/canvas/PaintCanvas.vue'
 import TopDownView from '@/components/debug/TopDownView.vue'
 import SideView from '@/components/debug/SideView.vue'
