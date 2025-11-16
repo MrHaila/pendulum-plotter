@@ -1,5 +1,9 @@
 <template>
-	<div class="flex h-full">
+	<!-- Show narrow screen message when window is too small -->
+	<NarrowScreenMessage v-if="isTooNarrow" :current-width="windowWidth" :min-width="minWidth" />
+
+	<!-- Main application layout -->
+	<div v-else class="flex h-full">
 		<!-- Left Sidebar -->
 		<aside class="w-80 border-r border-gray-200 bg-gray-50 overflow-y-auto p-4 space-y-4">
 			<ControlPanel
@@ -41,6 +45,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useSimulation } from '@/composables/useSimulation'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 import type { SimulationMode } from '@/composables/useSimulation'
 import { sphericalToCartesian } from '@/core/physics'
 import { downloadSVG } from '@/utils/svg'
@@ -51,7 +56,11 @@ import PaintCanvas from '@/components/canvas/PaintCanvas.vue'
 import TopDownView from '@/components/debug/TopDownView.vue'
 import SideView from '@/components/debug/SideView.vue'
 import RawDataDisplay from '@/components/debug/RawDataDisplay.vue'
+import NarrowScreenMessage from '@/components/NarrowScreenMessage.vue'
 import type { SimulationConfig, Point2D, Vec3 } from '@/types'
+
+// Responsive breakpoint detection
+const { windowWidth, isTooNarrow, minWidth } = useBreakpoint()
 
 // Default configuration
 const defaultConfig: SimulationConfig = {
