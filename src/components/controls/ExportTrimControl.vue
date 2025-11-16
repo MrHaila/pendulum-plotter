@@ -35,17 +35,19 @@
 		</div>
 
 		<!-- Reset Trim Button -->
-		<button
+		<AppButton
+			class="w-full"
 			:disabled="props.trimStart === 0 && props.trimEnd === pointCount"
-			class="w-full px-3 py-1.5 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 			@click="resetTrim"
 		>
 			Reset Trim
-		</button>
+		</AppButton>
 	</div>
 </template>
 
 <script setup lang="ts">
+import AppButton from '@/components/common/AppButton.vue'
+
 const props = defineProps<{
 	pointCount: number
 	trimStart: number

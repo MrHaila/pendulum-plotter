@@ -46,27 +46,29 @@
 		</div>
 
 		<!-- Reset Trim Button -->
-		<button
+		<AppButton
+			class="w-full"
 			:disabled="disabled || (props.trimStart === 0 && props.trimEnd === pointCount)"
-			class="w-full px-3 py-1.5 text-xs font-display font-light tracking-wider uppercase bg-base-200 dark:bg-base-700 text-base-800 dark:text-base-100 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md hover:bg-base-300 dark:hover:bg-base-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-120"
 			@click="resetTrim"
 		>
 			Reset Trim Range
-		</button>
+		</AppButton>
 
 		<!-- Export Button -->
-		<button
+		<AppButton
+			class="w-full px-4 py-2"
+			variant="primary"
 			:disabled="disabled"
-			class="w-full px-4 py-2 text-xs font-display font-light tracking-wider uppercase bg-gradient-to-b from-accent-primary-500 to-accent-primary-700 text-white rounded-md shadow-[0_1px_3px_rgba(69,40,20,0.08)] hover:shadow-[0_4px_8px_rgba(69,40,20,0.1)] disabled:from-base-300 disabled:to-base-300 dark:disabled:from-base-700 dark:disabled:to-base-700 disabled:text-base-500 disabled:cursor-not-allowed transition-all duration-120"
 			@click="$emit('export')"
 		>
-			Export SVG Document
-		</button>
+			Output SVG Measurements
+		</AppButton>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { computed, watch } from 'vue'
+import AppButton from '@/components/common/AppButton.vue'
 
 const props = defineProps<{
 	pointCount: number

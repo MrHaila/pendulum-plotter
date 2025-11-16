@@ -6,7 +6,7 @@
 	<div v-else class="flex h-full bg-base-50 dark:bg-base-900">
 		<!-- Left Sidebar -->
 		<aside
-			class="w-80 border-r border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] bg-base-100 dark:bg-base-800 p-3 space-y-0 flex flex-col"
+			class="w-80 flex-none border-r border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] bg-base-100 dark:bg-base-800 p-3 space-y-0 flex flex-col"
 		>
 			<div class="flex-1 overflow-y-auto pr-1 space-y-6">
 				<!-- Parameters Section (always visible) -->
@@ -61,7 +61,7 @@
 
 		<!-- Right Diagnostics -->
 		<aside
-			class="w-80 border-l border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] bg-base-100 dark:bg-base-800 overflow-y-auto p-3 space-y-6"
+			class="w-80 flex-none border-l border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] bg-base-100 dark:bg-base-800 overflow-y-auto p-3 space-y-6"
 		>
 			<!-- Runtime Stats Section -->
 			<section class="space-y-3">
