@@ -129,7 +129,11 @@
 
 			<!-- Top-Down View Section -->
 			<div class="py-4">
-				<TopDownView :position="currentGroundPosition" :rope-length="currentRopeLength" />
+				<TopDownView
+					:position="currentGroundPosition"
+					:position3-d="current3DPosition"
+					:rope-length="currentRopeLength"
+				/>
 			</div>
 
 			<div class="border-t border-gray-300" />

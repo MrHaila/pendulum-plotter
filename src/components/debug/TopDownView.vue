@@ -1,27 +1,38 @@
 <template>
 	<div>
 		<h3 class="text-sm font-semibold mb-3 text-gray-700">Top-Down View (XZ)</h3>
-		<canvas
-			ref="canvasRef"
-			:width="size"
-			:height="size"
-			class="border border-gray-300 bg-gray-50"
-			:style="{ width: size / 2 + 'px', height: size / 2 + 'px' }"
-		/>
+		<div ref="containerRef" class="w-full">
+			<canvas
+				ref="canvasRef"
+				:width="canvasSize"
+				:height="canvasSize"
+				class="border border-gray-300 bg-gray-50 w-full"
+				:style="{ aspectRatio: '1' }"
+			/>
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
-import type { Point2D } from '@/types'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
+import type { Point2D, Vec3 } from '@/types'
 
 const props = defineProps<{
 	position: Point2D
+	position3D: Vec3
 	ropeLength: number
 }>()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-const size = 400
+const containerRef = ref<HTMLDivElement | null>(null)
+const canvasSize = ref(400)
+
+const updateSize = () => {
+	if (!containerRef.value) return
+	const width = containerRef.value.offsetWidth
+	// Use 2x for retina/high-DPI displays
+	canvasSize.value = width * 2
+}
 
 const draw = () => {
 	const canvas = canvasRef.value
@@ -30,6 +41,7 @@ const draw = () => {
 	const ctx = canvas.getContext('2d')
 	if (!ctx) return
 
+	const size = canvasSize.value
 	const center = size / 2
 	const scale = (size * 0.8) / (2 * props.ropeLength)
 
@@ -65,13 +77,45 @@ const draw = () => {
 	ctx.lineWidth = 2
 	ctx.stroke()
 
-	// Position dot
+	// Position dot with depth cues
+	// Size based on Y (height): lower Y = higher up = closer to camera = bigger
+	// Y ranges from ~0 (at suspension, high) to ropeLength (fully extended down, low)
+	const yNormalized = Math.max(0, Math.min(1, props.position3D.y / props.ropeLength))
+	const sizeScale = 2.6 - yNormalized * 1.4 // 2.6 (high/close) to 1.8 (low/far)
+	const dotRadius = 6 * sizeScale
+
+	// Darkness: higher Y = closer to ground = darker
+	const lightness = 80 - yNormalized * 40 // 80% (light, top) to 50% (dark, bottom)
+
 	ctx.beginPath()
-	ctx.arc(x, y, 6, 0, Math.PI * 2)
-	ctx.fillStyle = '#ef4444'
+	ctx.arc(x, y, dotRadius, 0, Math.PI * 2)
+	ctx.fillStyle = `hsl(0, 84%, ${lightness}%)`
 	ctx.fill()
 }
 
-watch(() => [props.position, props.ropeLength], draw, { deep: true })
-onMounted(draw)
+// Resize observer to update canvas size
+let resizeObserver: ResizeObserver | null = null
+
+onMounted(() => {
+	updateSize()
+	draw()
+
+	// Watch for container size changes
+	if (containerRef.value) {
+		resizeObserver = new ResizeObserver(() => {
+			updateSize()
+			draw()
+		})
+		resizeObserver.observe(containerRef.value)
+	}
+})
+
+onUnmounted(() => {
+	if (resizeObserver) {
+		resizeObserver.disconnect()
+	}
+})
+
+watch(() => [props.position, props.position3D, props.ropeLength], draw, { deep: true })
+watch(canvasSize, draw)
 </script>
