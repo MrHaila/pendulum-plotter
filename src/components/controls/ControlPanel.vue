@@ -4,24 +4,38 @@
 			Execution Mode
 		</h3>
 
-		<!-- Mode Toggle -->
-		<div class="flex gap-2">
-			<AppButton
-				class="flex-1 px-3 py-2"
-				:variant="mode === 'instant' ? 'primary' : 'neutral'"
+		<!-- Mode Tabs -->
+		<div class="bg-base-200 dark:bg-base-700 rounded-lg p-1 flex gap-1">
+			<button
+				type="button"
+				:class="[
+					'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
+					mode === 'instant'
+						? 'bg-base-0 text-base-900 shadow-sm dark:bg-gradient-to-b dark:from-accent-primary-300 dark:to-accent-primary-500 dark:text-base-0'
+						: 'bg-transparent text-base-500 dark:text-base-400',
+					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+				]"
+				:aria-pressed="mode === 'instant'"
 				:disabled="status === 'running'"
 				@click="$emit('mode-change', 'instant')"
 			>
 				Instant
-			</AppButton>
-			<AppButton
-				class="flex-1 px-3 py-2"
-				:variant="mode === 'realtime' ? 'primary' : 'neutral'"
+			</button>
+			<button
+				type="button"
+				:class="[
+					'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
+					mode === 'realtime'
+						? 'bg-base-0 text-base-900 shadow-sm dark:bg-gradient-to-b dark:from-accent-primary-300 dark:to-accent-primary-500 dark:text-base-0'
+						: 'bg-transparent text-base-500 dark:text-base-400',
+					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+				]"
+				:aria-pressed="mode === 'realtime'"
 				:disabled="status === 'running'"
 				@click="$emit('mode-change', 'realtime')"
 			>
 				Real-time
-			</AppButton>
+			</button>
 		</div>
 
 		<!-- Instant Mode Controls -->
@@ -71,16 +85,16 @@
 				variant="secondary"
 				@click="$emit('pause')"
 			>
-				Pause
+				Stop
 			</AppButton>
 
 			<!-- Reset Button (always visible) -->
 			<AppButton
 				class="w-full px-4 py-2"
-				:disabled="status === 'running'"
+				:disabled="status === 'running' || status === 'idle'"
 				@click="$emit('reset')"
 			>
-				State Reinitialization
+				Clear Experiment
 			</AppButton>
 		</div>
 	</div>
