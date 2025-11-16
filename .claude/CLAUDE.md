@@ -58,6 +58,7 @@ Each component card-style, independently iterable.
 - Real-time mode for visualization
 - Test physics calculations independently
 - Visual debugging components always visible during dev
+- **Always run `pnpm lint` and `pnpm typecheck` after making changes to verify work**
 
 ## Testing Approach
 
