@@ -1,11 +1,22 @@
 <template>
 	<div class="space-y-3">
-		<h3 class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
-			Execution Mode
-		</h3>
-
 		<!-- Mode Tabs -->
 		<div class="bg-base-200 dark:bg-base-700 rounded-lg p-1 flex gap-1">
+			<button
+			type="button"
+			:class="[
+					'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
+					mode === 'realtime'
+						? 'bg-base-0 text-base-900 shadow-sm dark:bg-linear-to-b from-accent-primary-300 to-accent-primary-500 dark:text-base-0 bg-accent-primary-300'
+						: 'text-base-500 dark:text-base-400 hover:bg-base-0/70 hover:text-base-900 hover:shadow-sm dark:hover:bg-base-600 dark:hover:text-base-100',
+					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+				]"
+				:aria-pressed="mode === 'realtime'"
+				:disabled="status === 'running'"
+				@click="$emit('mode-change', 'realtime')"
+				>
+				Real-time
+			</button>
 			<button
 				type="button"
 				:class="[
@@ -20,21 +31,6 @@
 				@click="$emit('mode-change', 'instant')"
 			>
 				Instant
-			</button>
-			<button
-				type="button"
-				:class="[
-					'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
-					mode === 'realtime'
-						? 'bg-base-0 text-base-900 shadow-sm dark:bg-linear-to-b from-accent-primary-300 to-accent-primary-500 dark:text-base-0 bg-accent-primary-300'
-						: 'text-base-500 dark:text-base-400 hover:bg-base-0/70 hover:text-base-900 hover:shadow-sm dark:hover:bg-base-600 dark:hover:text-base-100',
-					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
-				]"
-				:aria-pressed="mode === 'realtime'"
-				:disabled="status === 'running'"
-				@click="$emit('mode-change', 'realtime')"
-			>
-				Real-time
 			</button>
 		</div>
 

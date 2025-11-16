@@ -13,7 +13,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	const paintPoints = ref<Point2D[]>(simulator.getPaintPoints())
 	const bounds = ref<BoundsConfig>(calculateBounds(initialConfig.ropeLength))
 
-	const mode = ref<SimulationMode>('instant')
+	const mode = ref<SimulationMode>('realtime')
 	const status = ref<SimulationStatus>('idle')
 	const initialConfig_ref = ref<SimulationConfig>({ ...initialConfig })
 
