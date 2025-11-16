@@ -40,16 +40,16 @@
 				>Iteration Count</label
 			>
 			<input
-				v-model.number="steps"
-				type="number"
-				min="100"
-				max="20000"
-				step="100"
-				:disabled="status !== 'idle' && status !== 'completed'"
+			v-model.number="steps"
+			type="number"
+			min="100"
+			max="20000"
+			step="100"
+			:disabled="status === 'running'"
 				class="w-full px-2 py-2 text-sm font-mono font-light bg-base-100 dark:bg-base-800 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md text-base-800 dark:text-base-100 focus:outline-none focus:ring-4 focus:ring-[rgba(255,209,149,0.08)] focus:border-accent-primary-500/90 disabled:bg-base-200 dark:disabled:bg-base-700 disabled:cursor-not-allowed transition-all duration-120"
 			/>
 			<AppButton class="w-full px-4 py-2" variant="primary" :disabled="status === 'running'" @click="handleGenerate">
-				Execute: Instant
+				Run
 			</AppButton>
 		</div>
 
@@ -62,7 +62,7 @@
 				variant="primary"
 				@click="$emit('start')"
 			>
-				Execute: Real-Time
+				Start
 			</AppButton>
 
 			<AppButton
@@ -84,15 +84,16 @@
 				Stop
 			</AppButton>
 
-			<!-- Reset Button (always visible) -->
-			<AppButton
-				class="w-full px-4 py-2"
-				:disabled="status === 'running' || status === 'idle'"
-				@click="$emit('reset')"
-			>
-				Clear Experiment
-			</AppButton>
 		</div>
+
+		<!-- Reset Button (always visible) -->
+		<AppButton
+			class="w-full px-4 py-2"
+			:disabled="status === 'running' || status === 'idle'"
+			@click="$emit('reset')"
+		>
+			Clear Experiment
+		</AppButton>
 	</div>
 </template>
 

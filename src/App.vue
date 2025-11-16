@@ -56,7 +56,7 @@
 		<!-- Main Canvas Area -->
 		<main class="flex-1 flex items-center justify-center p-8 bg-base-50 dark:bg-base-900 relative">
 			<RawDataDisplay :points="trimmedCanvasPoints" />
-			<PaintCanvas :points="trimmedCanvasPoints" />
+			<PaintCanvas :points="trimmedCanvasPoints" :show-placeholder="showCanvasPlaceholder" />
 		</main>
 
 		<!-- Right Diagnostics -->
@@ -142,6 +142,12 @@ const {
 // Point count for stats
 const pointCount = computed(() => paintPoints.value.length)
 
+const hasPlaceholderBeenDismissed = ref(false)
+
+const showCanvasPlaceholder = computed(
+	() => !hasPlaceholderBeenDismissed.value && status.value === 'idle' && pointCount.value <= 1,
+)
+
 // Trim controls for export
 const trimStart = ref(0)
 const trimEnd = ref(0)
@@ -150,6 +156,10 @@ const trimEnd = ref(0)
 watch(pointCount, newCount => {
 	trimStart.value = 0
 	trimEnd.value = newCount
+
+	if (newCount > 1) {
+		hasPlaceholderBeenDismissed.value = true
+	}
 })
 
 // Trimmed canvas points for display and export

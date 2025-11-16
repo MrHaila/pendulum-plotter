@@ -7,6 +7,24 @@
 			class="border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] shadow-[0_4px_8px_rgba(69,40,20,0.1),0_2px_4px_rgba(69,40,20,0.06)] rounded-lg canvas-paper"
 			:style="{ width: displayWidth + 'px', height: displayHeight + 'px' }"
 		/>
+		<div
+			v-if="showPlaceholder"
+			class="absolute inset-0 p-10 pointer-events-none content-center"
+		>
+			<div
+				class="text-base-900 dark:text-[#f2e7da] font-semibold tracking-tight leading-relaxed quote-overlay"
+			>
+				<div class="text-[140px] leading-6 text-[#a54f2a]">&ldquo;</div>
+				<div class="text-lg space-y-5">
+					<p>I don’t trust fate. I control it.</p>
+					<p>I dial in the experiment, press <span class="text-accent-primary-300">START</span>, and watch.</p>
+					<p>The pendulum swings, dripping color, sketching a geometry that feels both alien and primal.</p>
+					<p>The pendulum swings, drawing a rhythm, tracing truth.</p>
+					<p>The pendulum swings, and I watch, and I record.</p>
+					<p>And then I <span class="text-accent-primary-300">export</span>.</p>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -17,6 +35,7 @@ import { A4_WIDTH, A4_HEIGHT, simulationToViewport } from '@/utils/coordinates'
 
 const props = defineProps<{
 	points: Point2D[]
+	showPlaceholder?: boolean
 }>()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -103,5 +122,10 @@ html.dark .canvas-paper {
 		linear-gradient(135deg, #2b2014 0%, #1f1810 100%),
 		url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
 	background-blend-mode: normal, overlay;
+}
+
+.quote-overlay {
+	font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+	font-weight: 500;
 }
 </style>
