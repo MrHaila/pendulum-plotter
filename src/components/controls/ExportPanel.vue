@@ -1,5 +1,14 @@
 <template>
 	<div class="space-y-3">
+		<AppButton
+			class="w-full px-4 py-2"
+			variant="secondary"
+			:disabled="disabled || pointCount < 2"
+			@click="$emit('auto-trim')"
+		>
+			Auto Trim Path
+		</AppButton>
+
 		<!-- Trim Controls -->
 		<div>
 			<div class="grid grid-cols-2 gap-3">
@@ -50,19 +59,14 @@
 		</AppButton>
 
 		<!-- Export Button -->
-		<AppButton
-			class="w-full px-4 py-2"
-			variant="primary"
-			:disabled="disabled"
-			@click="$emit('export')"
-		>
+		<AppButton class="w-full px-4 py-2" variant="primary" :disabled="disabled" @click="$emit('export')">
 			Output SVG Measurements
 		</AppButton>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { watch } from 'vue'
 import AppButton from '@/components/common/AppButton.vue'
 
 const props = defineProps<{
@@ -73,18 +77,11 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
+	'auto-trim': []
 	export: []
 	'update:trimStart': [value: number]
 	'update:trimEnd': [value: number]
 }>()
-
-// Display label that shows "simulating..." when disabled
-const displayLabel = computed(() => {
-	if (props.disabled) {
-		return 'Trim Range: simulating...'
-	}
-	return `Trim Range: ${props.trimStart} - ${props.trimEnd} (of ${props.pointCount})`
-})
 
 // Watch for disabled -> enabled transition, reset to full range
 watch(

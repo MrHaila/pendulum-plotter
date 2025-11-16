@@ -12,11 +12,7 @@
 		<button
 			type="button"
 			class="relative z-10 w-8 py-1.5 flex items-center justify-center text-[11px] font-display tracking-[0.2em] uppercase transition-colors"
-			:class="
-				isDark
-					? 'text-base-500 hover:text-base-300'
-					: 'text-base-900'
-			"
+			:class="isDark ? 'text-base-500 hover:text-base-300' : 'text-base-900'"
 			:aria-pressed="!isDark"
 			title="Switch to light mode"
 			@click="setLightMode"
@@ -39,22 +35,12 @@
 		<button
 			type="button"
 			class="relative z-10 w-8 py-1.5 flex items-center justify-center text-[11px] font-display tracking-[0.2em] uppercase transition-colors"
-			:class="
-				isDark
-					? 'text-base-0'
-					: 'text-base-500 hover:text-base-700'
-			"
+			:class="isDark ? 'text-base-0' : 'text-base-500 hover:text-base-700'"
 			:aria-pressed="isDark"
 			title="Switch to dark mode"
 			@click="setDarkMode"
 		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				class="h-4 w-4"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke="currentColor"
-			>
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 				<path
 					stroke-linecap="round"
 					stroke-linejoin="round"

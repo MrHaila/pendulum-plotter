@@ -3,18 +3,18 @@
 		<!-- Mode Tabs -->
 		<div class="bg-base-200 dark:bg-base-700 rounded-lg p-1 flex gap-1">
 			<button
-			type="button"
-			:class="[
+				type="button"
+				:class="[
 					'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
 					mode === 'realtime'
 						? 'bg-base-0 text-base-900 shadow-sm dark:bg-linear-to-b from-accent-primary-300 to-accent-primary-500 dark:text-base-0 bg-accent-primary-300'
 						: 'text-base-500 dark:text-base-400 hover:bg-base-0/70 hover:text-base-900 hover:shadow-sm dark:hover:bg-base-600 dark:hover:text-base-100',
-					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
 				]"
 				:aria-pressed="mode === 'realtime'"
 				:disabled="status === 'running'"
 				@click="$emit('mode-change', 'realtime')"
-				>
+			>
 				Real-time
 			</button>
 			<button
@@ -24,7 +24,7 @@
 					mode === 'instant'
 						? 'bg-base-0 text-base-900 shadow-sm dark:bg-linear-to-b from-accent-primary-300 to-accent-primary-500 dark:text-base-0 bg-accent-primary-300'
 						: 'text-base-500 dark:text-base-400 hover:bg-base-0/70 hover:text-base-900 hover:shadow-sm dark:hover:bg-base-600 dark:hover:text-base-100',
-					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
 				]"
 				:aria-pressed="mode === 'instant'"
 				:disabled="status === 'running'"
@@ -40,12 +40,12 @@
 				>Iteration Count</label
 			>
 			<input
-			v-model.number="steps"
-			type="number"
-			min="100"
-			max="20000"
-			step="100"
-			:disabled="status === 'running'"
+				v-model.number="steps"
+				type="number"
+				min="100"
+				max="20000"
+				step="100"
+				:disabled="status === 'running'"
 				class="w-full px-2 py-2 text-sm font-mono font-light bg-base-100 dark:bg-base-800 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md text-base-800 dark:text-base-100 focus:outline-none focus:ring-4 focus:ring-[rgba(255,209,149,0.08)] focus:border-accent-primary-500/90 disabled:bg-base-200 dark:disabled:bg-base-700 disabled:cursor-not-allowed transition-all duration-120"
 			/>
 			<AppButton class="w-full px-4 py-2" variant="primary" :disabled="status === 'running'" @click="handleGenerate">
@@ -65,33 +65,18 @@
 				Start
 			</AppButton>
 
-			<AppButton
-				v-else-if="status === 'paused'"
-				class="w-full px-4 py-2"
-				variant="primary"
-				@click="$emit('resume')"
-			>
+			<AppButton v-else-if="status === 'paused'" class="w-full px-4 py-2" variant="primary" @click="$emit('resume')">
 				Resume
 			</AppButton>
 
 			<!-- Pause Button -->
-			<AppButton
-				v-if="status === 'running'"
-				class="w-full px-4 py-2"
-				variant="secondary"
-				@click="$emit('pause')"
-			>
+			<AppButton v-if="status === 'running'" class="w-full px-4 py-2" variant="secondary" @click="$emit('pause')">
 				Stop
 			</AppButton>
-
 		</div>
 
 		<!-- Reset Button (always visible) -->
-		<AppButton
-			class="w-full px-4 py-2"
-			:disabled="status === 'running' || status === 'idle'"
-			@click="$emit('reset')"
-		>
+		<AppButton class="w-full px-4 py-2" :disabled="status === 'running' || status === 'idle'" @click="$emit('reset')">
 			Clear Experiment
 		</AppButton>
 	</div>

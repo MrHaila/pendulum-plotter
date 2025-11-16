@@ -7,13 +7,8 @@
 			class="border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] shadow-[0_4px_8px_rgba(69,40,20,0.1),0_2px_4px_rgba(69,40,20,0.06)] rounded-lg canvas-paper"
 			:style="{ width: displayWidth + 'px', height: displayHeight + 'px' }"
 		/>
-		<div
-			v-if="showPlaceholder"
-			class="absolute inset-0 p-10 pointer-events-none content-center"
-		>
-			<div
-				class="text-base-900 dark:text-[#f2e7da] font-semibold tracking-tight leading-relaxed quote-overlay"
-			>
+		<div v-if="showPlaceholder" class="absolute inset-0 p-10 pointer-events-none content-center">
+			<div class="text-base-900 dark:text-[#f2e7da] font-semibold tracking-tight leading-relaxed quote-overlay">
 				<div class="text-[140px] leading-6 text-[#a54f2a]">&ldquo;</div>
 				<div class="text-lg space-y-5">
 					<p>I don’t trust fate. I control it.</p>

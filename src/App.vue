@@ -42,6 +42,7 @@
 						:trim-start="trimStart"
 						:trim-end="trimEnd"
 						:disabled="status === 'running' || status === 'idle'"
+						@auto-trim="handleAutoTrim"
 						@update:trim-start="handleTrimStartUpdate"
 						@update:trim-end="handleTrimEndUpdate"
 						@export="handleExport"
@@ -94,6 +95,7 @@ import { useSimulation } from '@/composables/useSimulation'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import type { SimulationMode } from '@/composables/useSimulation'
 import { sphericalToCartesian } from '@/core/physics'
+import { autoTrimLine, type TrimOverrides } from '@/core/trimming'
 import { downloadSVG } from '@/utils/svg'
 import ControlPanel from '@/components/controls/ControlPanel.vue'
 import InitialParameterControls from '@/components/controls/InitialParameterControls.vue'
@@ -151,11 +153,13 @@ const showCanvasPlaceholder = computed(
 // Trim controls for export
 const trimStart = ref(0)
 const trimEnd = ref(0)
+const trimOverrides = ref<TrimOverrides | null>(null)
 
 // Reset trim to full range when pointCount changes (new simulation)
 watch(pointCount, newCount => {
 	trimStart.value = 0
 	trimEnd.value = newCount
+	trimOverrides.value = null
 
 	if (newCount > 1) {
 		hasPlaceholderBeenDismissed.value = true
@@ -164,7 +168,22 @@ watch(pointCount, newCount => {
 
 // Trimmed canvas points for display and export
 const trimmedCanvasPoints = computed(() => {
-	return canvasPoints.value.slice(trimStart.value, trimEnd.value)
+	const points = canvasPoints.value
+	const segment = points.slice(trimStart.value, trimEnd.value)
+	if (segment.length === 0) {
+		return segment
+	}
+	if (!trimOverrides.value) {
+		return segment
+	}
+	const result = [...segment]
+	if (trimOverrides.value.start) {
+		result[0] = trimOverrides.value.start
+	}
+	if (trimOverrides.value.end && result.length > 1) {
+		result[result.length - 1] = trimOverrides.value.end
+	}
+	return result
 })
 
 // Current rope length (from initial config)
@@ -216,10 +235,22 @@ const handleInitialConfigUpdate = (newConfig: Partial<SimulationConfig>) => {
 
 const handleTrimStartUpdate = (value: number) => {
 	trimStart.value = value
+	trimOverrides.value = null
 }
 
 const handleTrimEndUpdate = (value: number) => {
 	trimEnd.value = value
+	trimOverrides.value = null
+}
+
+const handleAutoTrim = () => {
+	if (canvasPoints.value.length < 2) {
+		return
+	}
+	const result = autoTrimLine(canvasPoints.value)
+	trimStart.value = result.startIndex
+	trimEnd.value = result.endIndex
+	trimOverrides.value = result.overrides
 }
 
 const handleExport = () => {

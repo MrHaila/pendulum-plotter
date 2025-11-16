@@ -35,11 +35,7 @@
 		</div>
 
 		<!-- Reset Trim Button -->
-		<AppButton
-			class="w-full"
-			:disabled="props.trimStart === 0 && props.trimEnd === pointCount"
-			@click="resetTrim"
-		>
+		<AppButton class="w-full" :disabled="props.trimStart === 0 && props.trimEnd === pointCount" @click="resetTrim">
 			Reset Trim
 		</AppButton>
 	</div>
