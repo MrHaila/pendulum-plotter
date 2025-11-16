@@ -1,18 +1,10 @@
 <template>
 	<div class="relative">
-		<!-- Raw debug data background -->
-		<div
-			class="absolute inset-0 overflow-hidden pointer-events-none text-xs text-gray-200 font-mono leading-tight p-2 select-none"
-		>
-			{{ props.points }}
-		</div>
-
-		<!-- Canvas -->
 		<canvas
 			ref="canvasRef"
 			:width="canvasWidth"
 			:height="canvasHeight"
-			class="border border-gray-300 shadow-lg bg-white relative z-10"
+			class="border border-gray-300 shadow-lg bg-white"
 			:style="{ width: displayWidth + 'px', height: displayHeight + 'px' }"
 		/>
 	</div>

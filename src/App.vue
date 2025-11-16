@@ -8,7 +8,8 @@
 		</aside>
 
 		<!-- Main Canvas Area -->
-		<main class="flex-1 flex items-center justify-center p-8 bg-white">
+		<main class="flex-1 flex items-center justify-center p-8 bg-white relative">
+			<RawDataDisplay :points="canvasPoints" />
 			<PaintCanvas :points="canvasPoints" />
 		</main>
 
@@ -30,6 +31,7 @@ import PaintCanvas from '@/components/canvas/PaintCanvas.vue'
 import StateDisplay from '@/components/debug/StateDisplay.vue'
 import TopDownView from '@/components/debug/TopDownView.vue'
 import SideView from '@/components/debug/SideView.vue'
+import RawDataDisplay from '@/components/debug/RawDataDisplay.vue'
 import type { SimulationConfig, Point2D, Vec3 } from '@/types'
 
 // Default configuration
