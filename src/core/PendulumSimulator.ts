@@ -1,20 +1,33 @@
-import type { PendulumState, SimulationConfig, Point2D } from '@/types'
-import { integrateRK4, sphericalToCartesian } from './physics'
+import type { PendulumState, SimulationConfig, Point2D, Vec3 } from '@/types'
+import {
+	integrateCartesian,
+	sphericalToCartesian,
+	sphericalToCartesianVelocity,
+	cartesianToSpherical,
+	cartesianToSphericalVelocity,
+} from './physics'
 
 export class PendulumSimulator {
-	private state: PendulumState
+	private pos: Vec3
+	private vel: Vec3
 	private config: SimulationConfig
 	private paintPoints: Point2D[] = []
+	private time: number = 0
 
 	constructor(config: SimulationConfig) {
 		this.config = config
-		this.state = {
-			theta: config.initialTheta,
-			phi: config.initialPhi,
-			thetaDot: config.initialThetaDot,
-			phiDot: config.initialPhiDot,
-			time: 0,
-		}
+		this.time = 0
+		
+		// Initialize state from spherical config
+		this.pos = sphericalToCartesian(config.initialTheta, config.initialPhi, config.ropeLength)
+		this.vel = sphericalToCartesianVelocity(
+			config.initialTheta,
+			config.initialPhi,
+			config.initialThetaDot,
+			config.initialPhiDot,
+			config.ropeLength,
+		)
+
 		// Add initial paint point
 		this.addPaintPoint()
 	}
@@ -23,7 +36,10 @@ export class PendulumSimulator {
 	 * Advance simulation by one timestep
 	 */
 	step(): void {
-		this.state = integrateRK4(this.state, this.config)
+		const result = integrateCartesian(this.pos, this.vel, this.config)
+		this.pos = result.pos
+		this.vel = result.vel
+		this.time += this.config.timestep
 		this.addPaintPoint()
 	}
 
@@ -31,22 +47,38 @@ export class PendulumSimulator {
 	 * Reset simulation to initial conditions
 	 */
 	reset(): void {
-		this.state = {
-			theta: this.config.initialTheta,
-			phi: this.config.initialPhi,
-			thetaDot: this.config.initialThetaDot,
-			phiDot: this.config.initialPhiDot,
-			time: 0,
-		}
+		this.time = 0
+		this.pos = sphericalToCartesian(
+			this.config.initialTheta,
+			this.config.initialPhi,
+			this.config.ropeLength,
+		)
+		this.vel = sphericalToCartesianVelocity(
+			this.config.initialTheta,
+			this.config.initialPhi,
+			this.config.initialThetaDot,
+			this.config.initialPhiDot,
+			this.config.ropeLength,
+		)
 		this.paintPoints = []
 		this.addPaintPoint()
 	}
 
 	/**
 	 * Get current simulation state
+	 * Converts internal Cartesian state back to spherical for UI
 	 */
 	getState(): PendulumState {
-		return { ...this.state }
+		const { theta, phi } = cartesianToSpherical(this.pos)
+		const { thetaDot, phiDot } = cartesianToSphericalVelocity(this.pos, this.vel)
+
+		return {
+			theta,
+			phi,
+			thetaDot,
+			phiDot,
+			time: this.time,
+		}
 	}
 
 	/**
@@ -61,11 +93,11 @@ export class PendulumSimulator {
 	 * Projects 3D position to 2D ground plane (XZ)
 	 */
 	private addPaintPoint(): void {
-		const pos = sphericalToCartesian(this.state.theta, this.state.phi, this.config.ropeLength)
 		// Paint drips to ground (Y = ropeLength), use X and Z for 2D position
+		// In our Cartesian system, y is vertical (down), x and z are horizontal
 		this.paintPoints.push({
-			x: pos.x,
-			y: pos.z, // Using Z as Y for 2D canvas (top-down view)
+			x: this.pos.x,
+			y: this.pos.z, // Using Z as Y for 2D canvas (top-down view)
 		})
 	}
 
