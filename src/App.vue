@@ -45,7 +45,8 @@
 						@auto-trim="handleAutoTrim"
 						@update:trim-start="handleTrimStartUpdate"
 						@update:trim-end="handleTrimEndUpdate"
-						@export="handleExport"
+						@export-svg="handleExportSVG"
+						@export-png="handleExportPNG"
 					/>
 				</section>
 			</div>
@@ -97,6 +98,7 @@ import type { SimulationMode } from '@/composables/useSimulation'
 import { sphericalToCartesian } from '@/core/physics'
 import { autoTrimLine, type TrimOverrides } from '@/core/trimming'
 import { downloadSVG } from '@/utils/svg'
+import { downloadPNG } from '@/utils/png'
 import ControlPanel from '@/components/controls/ControlPanel.vue'
 import InitialParameterControls from '@/components/controls/InitialParameterControls.vue'
 import ExportPanel from '@/components/controls/ExportPanel.vue'
@@ -253,7 +255,11 @@ const handleAutoTrim = () => {
 	trimOverrides.value = result.overrides
 }
 
-const handleExport = () => {
+const handleExportSVG = () => {
 	downloadSVG(trimmedCanvasPoints.value)
+}
+
+const handleExportPNG = () => {
+	downloadPNG(trimmedCanvasPoints.value)
 }
 </script>

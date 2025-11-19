@@ -58,10 +58,11 @@
 			Reset Trim Range
 		</AppButton>
 
-		<!-- Export Button -->
-		<AppButton class="w-full px-4 py-2" variant="primary" :disabled="disabled" @click="$emit('export')">
-			Output SVG Measurements
-		</AppButton>
+		<!-- Export Buttons -->
+		<div class="grid grid-cols-2 gap-2">
+			<AppButton class="px-3 py-2" variant="primary" :disabled="disabled" @click="$emit('export-svg')"> SVG </AppButton>
+			<AppButton class="px-3 py-2" variant="primary" :disabled="disabled" @click="$emit('export-png')"> PNG </AppButton>
+		</div>
 	</div>
 </template>
 
@@ -78,7 +79,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	'auto-trim': []
-	export: []
+	'export-svg': []
+	'export-png': []
 	'update:trimStart': [value: number]
 	'update:trimEnd': [value: number]
 }>()
