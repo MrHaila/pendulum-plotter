@@ -18,6 +18,7 @@ import type { Vec3 } from '@/types'
 
 const props = defineProps<{
 	position3D: Vec3
+	velocity: Vec3
 	ropeLength: number
 }>()
 
@@ -79,6 +80,41 @@ const draw = () => {
 	ctx.lineWidth = 2
 	ctx.stroke()
 
+	// Draw velocity arrow
+	// Velocity in XY plane
+	const vx = props.velocity.x
+	const vy = props.velocity.y
+	const speed = Math.sqrt(vx * vx + vy * vy)
+
+	if (speed > 0.01) {
+		const arrowScale = scale * 0.3 // Scale factor for visual length
+		const endX = x + vx * arrowScale
+		const endY = y + vy * arrowScale
+
+		ctx.beginPath()
+		ctx.moveTo(x, y)
+		ctx.lineTo(endX, endY)
+		ctx.strokeStyle = '#ef4444' // Red arrow
+		ctx.lineWidth = 2
+		ctx.stroke()
+
+		// Arrowhead with perspective scaling
+		// Z velocity is depth (in/out of screen)
+		// Positive Z is towards camera, Negative Z is away
+		const depthVel = props.velocity.z
+		const perspectiveScale = Math.max(0.2, Math.min(2.5, 1 + (depthVel / 5) * 1.0))
+		const headLen = 10 * perspectiveScale
+
+		const angle = Math.atan2(vy, vx)
+		ctx.beginPath()
+		ctx.moveTo(endX, endY)
+		ctx.lineTo(endX - headLen * Math.cos(angle - Math.PI / 6), endY - headLen * Math.sin(angle - Math.PI / 6))
+		ctx.lineTo(endX - headLen * Math.cos(angle + Math.PI / 6), endY - headLen * Math.sin(angle + Math.PI / 6))
+		ctx.lineTo(endX, endY)
+		ctx.fillStyle = '#ef4444'
+		ctx.fill()
+	}
+
 	// Draw bucket with depth cues
 	// Size based on Z (depth): closer to camera (higher Z) = bigger
 	const zNormalized = Math.max(-1, Math.min(1, props.position3D.z / props.ropeLength))
@@ -117,6 +153,6 @@ onUnmounted(() => {
 	}
 })
 
-watch(() => [props.position3D, props.ropeLength], draw, { deep: true })
+watch(() => [props.position3D, props.velocity, props.ropeLength], draw, { deep: true })
 watch(canvasSize, draw)
 </script>

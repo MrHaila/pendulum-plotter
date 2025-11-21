@@ -77,6 +77,7 @@
 				<TopDownView
 					:position="currentGroundPosition"
 					:position3-d="current3DPosition"
+					:velocity="velocity"
 					:rope-length="currentRopeLength"
 				/>
 			</section>
@@ -84,7 +85,11 @@
 			<!-- Side View Section -->
 			<section class="space-y-3">
 				<SidebarSectionHeader label="XY Planar Projection" />
-				<SideView :position3-d="current3DPosition" :rope-length="currentRopeLength" />
+				<SideView
+					:position3-d="current3DPosition"
+					:velocity="velocity"
+					:rope-length="currentRopeLength"
+				/>
 			</section>
 		</aside>
 	</div>
@@ -131,6 +136,7 @@ const {
 	canvasPoints,
 	paintPoints,
 	state,
+	velocity,
 	mode,
 	status,
 	initialConfig,

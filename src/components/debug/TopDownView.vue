@@ -19,6 +19,7 @@ import type { Point2D, Vec3 } from '@/types'
 const props = defineProps<{
 	position: Point2D
 	position3D: Vec3
+	velocity: Vec3
 	ropeLength: number
 }>()
 
@@ -78,6 +79,41 @@ const draw = () => {
 	ctx.lineWidth = 2
 	ctx.stroke()
 
+	// Draw velocity arrow
+	// Velocity in XZ plane
+	const vx = props.velocity.x
+	const vy = props.velocity.z // Y on screen is Z in 3D for top-down
+	const speed = Math.sqrt(vx * vx + vy * vy)
+
+	if (speed > 0.01) {
+		const arrowScale = scale * 0.3 // Scale factor for visual length
+		const endX = x + vx * arrowScale
+		const endY = y + vy * arrowScale
+
+		ctx.beginPath()
+		ctx.moveTo(x, y)
+		ctx.lineTo(endX, endY)
+		ctx.strokeStyle = '#ef4444' // Red arrow
+		ctx.lineWidth = 2
+		ctx.stroke()
+
+		// Arrowhead with perspective scaling
+		// Y velocity is depth (vertical movement)
+		// Positive Y is down (away from camera), Negative Y is up (towards camera)
+		const depthVel = -props.velocity.y
+		const perspectiveScale = Math.max(0.2, Math.min(2.5, 1 + (depthVel / 5) * 1.0))
+		const headLen = 10 * perspectiveScale
+
+		const angle = Math.atan2(vy, vx)
+		ctx.beginPath()
+		ctx.moveTo(endX, endY)
+		ctx.lineTo(endX - headLen * Math.cos(angle - Math.PI / 6), endY - headLen * Math.sin(angle - Math.PI / 6))
+		ctx.lineTo(endX - headLen * Math.cos(angle + Math.PI / 6), endY - headLen * Math.sin(angle + Math.PI / 6))
+		ctx.lineTo(endX, endY)
+		ctx.fillStyle = '#ef4444'
+		ctx.fill()
+	}
+
 	// Position dot with depth cues
 	// Size based on Y (height): lower Y = higher up = closer to camera = bigger
 	// Y ranges from ~0 (at suspension, high) to ropeLength (fully extended down, low)
@@ -117,6 +153,6 @@ onUnmounted(() => {
 	}
 })
 
-watch(() => [props.position, props.position3D, props.ropeLength], draw, { deep: true })
+watch(() => [props.position, props.position3D, props.velocity, props.ropeLength], draw, { deep: true })
 watch(canvasSize, draw)
 </script>

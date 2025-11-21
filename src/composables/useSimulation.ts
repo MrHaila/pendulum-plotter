@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import type { SimulationConfig, PendulumState, Point2D, BoundsConfig } from '@/types'
+import type { SimulationConfig, PendulumState, Point2D, BoundsConfig, Vec3 } from '@/types'
 import { PendulumSimulator } from '@/core/PendulumSimulator'
 import { calculateBounds, groundToCanvas } from '@/utils/coordinates'
 
@@ -10,6 +10,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	const simulator = new PendulumSimulator(initialConfig)
 
 	const state = ref<PendulumState>(simulator.getState())
+	const velocity = ref<Vec3>(simulator.getVelocity())
 	const paintPoints = ref<Point2D[]>(simulator.getPaintPoints())
 	const bounds = ref<BoundsConfig>(calculateBounds(initialConfig.ropeLength))
 
@@ -35,6 +36,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	const step = () => {
 		simulator.step()
 		state.value = simulator.getState()
+		velocity.value = simulator.getVelocity()
 		paintPoints.value = [...simulator.getPaintPoints()]
 	}
 
@@ -47,6 +49,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 			simulator.step()
 		}
 		state.value = simulator.getState()
+		velocity.value = simulator.getVelocity()
 		paintPoints.value = [...simulator.getPaintPoints()]
 		status.value = 'completed'
 	}
@@ -78,6 +81,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		if (status.value === 'completed') {
 			simulator.reset()
 			state.value = simulator.getState()
+			velocity.value = simulator.getVelocity()
 			paintPoints.value = [...simulator.getPaintPoints()]
 		}
 
@@ -133,6 +137,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		stop()
 		simulator.reset()
 		state.value = simulator.getState()
+		velocity.value = simulator.getVelocity()
 		paintPoints.value = [...simulator.getPaintPoints()]
 		status.value = 'idle'
 	}
@@ -150,6 +155,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		stop()
 		simulator.reset()
 		state.value = simulator.getState()
+		velocity.value = simulator.getVelocity()
 		paintPoints.value = [...simulator.getPaintPoints()]
 		status.value = 'idle'
 	}
@@ -164,6 +170,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		}
 		// Force state update to reflect new config
 		state.value = simulator.getState()
+		velocity.value = simulator.getVelocity()
 	}
 
 	/**
@@ -175,6 +182,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 
 	return {
 		state,
+		velocity,
 		paintPoints,
 		canvasPoints,
 		bounds,

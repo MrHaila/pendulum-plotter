@@ -102,6 +102,13 @@ export class PendulumSimulator {
 	}
 
 	/**
+	 * Get current Cartesian velocity
+	 */
+	getVelocity(): Vec3 {
+		return { ...this.vel }
+	}
+
+	/**
 	 * Update simulation configuration
 	 */
 	updateConfig(newConfig: Partial<SimulationConfig>): void {
