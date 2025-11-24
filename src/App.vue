@@ -59,7 +59,7 @@
 		<!-- Main Canvas Area -->
 		<main class="flex-1 flex items-center justify-center p-8 bg-base-50 dark:bg-base-900 relative">
 			<RawDataDisplay :points="trimmedCanvasPoints" />
-			<PaintCanvas :points="trimmedCanvasPoints" :show-placeholder="showCanvasPlaceholder" />
+			<PaintCanvas :points="trimmedCanvasPoints" :bounds="bounds" :show-placeholder="showCanvasPlaceholder" />
 		</main>
 
 		<!-- Right Diagnostics -->
@@ -124,6 +124,7 @@ const defaultConfig: SimulationConfig = {
 	damping: 0.05,
 	timestep: 0.01,
 	zoom: 2.0,
+	canvasShape: 'a4-portrait',
 	initialTheta: 0.5,
 	initialPhi: Math.PI / 4,
 	initialThetaDot: 0.3,
@@ -137,6 +138,7 @@ const {
 	velocity,
 	mode,
 	status,
+	bounds,
 	initialConfig,
 	reset,
 	runInstant,

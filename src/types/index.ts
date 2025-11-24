@@ -28,6 +28,7 @@ export interface SimulationConfig {
 	damping: number // damping coefficient (0 = no damping)
 	timestep: number // seconds per step
 	zoom: number // scale factor for visualization
+	canvasShape: CanvasShape // measurement area configuration
 	initialTheta: number // radians
 	initialPhi: number // radians
 	initialThetaDot: number // rad/s
@@ -38,4 +39,8 @@ export interface BoundsConfig {
 	centerX: number
 	centerZ: number
 	scale: number
+	canvasWidth: number
+	canvasHeight: number
 }
+
+export type CanvasShape = 'square-center' | 'a4-portrait' | 'a4-landscape' | '16x9-portrait' | '16x9-landscape'

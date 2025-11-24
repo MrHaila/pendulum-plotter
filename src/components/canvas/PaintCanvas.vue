@@ -11,11 +11,12 @@
 			<div class="text-base-900 dark:text-[#f2e7da] font-semibold tracking-tight leading-relaxed quote-overlay">
 				<div class="text-[140px] leading-6 text-[#a54f2a]">&ldquo;</div>
 				<div class="text-lg space-y-5">
-					<p>I don’t trust fate. I control it.</p>
+					<p>I do not trust fate. I control it.</p>
 					<p>I dial in the experiment, press <span class="text-accent-primary-300">start</span>, and watch.</p>
 					<!-- <p>The pendulum swings, dripping color, sketching a geometry that feels both alien and primal.</p>
 					<p>The pendulum swings, drawing a rhythm, tracing truth.</p> -->
 					<p>The pendulum swings, and I watch, and I record.</p>
+					<p>I clean up my data.</p>
 					<p>And then I <span class="text-accent-primary-300">export</span>.</p>
 				</div>
 			</div>
@@ -24,24 +25,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
-import type { Point2D } from '@/types'
-import { A4_WIDTH, A4_HEIGHT, simulationToViewport } from '@/utils/coordinates'
+import { ref, watch, onMounted, computed } from 'vue'
+import type { Point2D, BoundsConfig } from '@/types'
+import { simulationToViewport } from '@/utils/coordinates'
 
 const props = defineProps<{
 	points: Point2D[]
+	bounds: BoundsConfig
 	showPlaceholder?: boolean
 }>()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
-// Canvas backing store dimensions (high DPI)
+// Canvas backing store dimensions (high DPI) - reactive to bounds changes
 const dpr = window.devicePixelRatio || 1
 const baseWidth = 600 // Base display width in pixels
-const baseHeight = Math.floor(baseWidth * (A4_HEIGHT / A4_WIDTH)) // Maintain A4 aspect ratio
+const aspectRatio = computed(() => props.bounds.canvasHeight / props.bounds.canvasWidth)
+const baseHeight = computed(() => Math.floor(baseWidth * aspectRatio.value)) // Dynamic aspect ratio based on shape
 
-const canvasWidth = baseWidth * dpr
-const canvasHeight = baseHeight * dpr
+const canvasWidth = computed(() => baseWidth * dpr)
+const canvasHeight = computed(() => baseHeight.value * dpr)
 const displayWidth = baseWidth
 const displayHeight = baseHeight
 
@@ -70,7 +73,7 @@ const draw = () => {
 
 	// Full redraw on reset (points array shrunk)
 	if (points.length < lastDrawnCount) {
-		ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+		ctx.clearRect(0, 0, canvasWidth.value, canvasHeight.value)
 		lastDrawnCount = 0
 	}
 
@@ -85,8 +88,8 @@ const draw = () => {
 	// Draw only new segments
 	const startIdx = Math.max(1, lastDrawnCount)
 	for (let i = startIdx; i < points.length; i++) {
-		const prevPoint = simulationToViewport(points[i - 1], canvasWidth, canvasHeight)
-		const currPoint = simulationToViewport(points[i], canvasWidth, canvasHeight)
+		const prevPoint = simulationToViewport(points[i - 1], canvasWidth.value, canvasHeight.value, props.bounds)
+		const currPoint = simulationToViewport(points[i], canvasWidth.value, canvasHeight.value, props.bounds)
 
 		ctx.beginPath()
 		ctx.moveTo(prevPoint.x, prevPoint.y)
@@ -99,6 +102,16 @@ const draw = () => {
 
 // Redraw when points change
 watch(() => props.points.length, draw)
+
+// Reset canvas when bounds change (aspect ratio changes)
+watch(
+	() => props.bounds,
+	() => {
+		lastDrawnCount = 0
+		draw()
+	},
+	{ deep: true },
+)
 
 // Initial draw
 onMounted(draw)

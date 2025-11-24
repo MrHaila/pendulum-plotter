@@ -26,7 +26,30 @@
 				</p> -->
 			</div>
 
-			<!-- Gravity not editable on purpose -->
+			<!-- Measurement Area -->
+			<div>
+				<div class="flex justify-between items-baseline mb-1">
+					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+						Measurement Area
+					</label>
+					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100">{{
+						CANVAS_SHAPES[localConfig.canvasShape].description
+					}}</span>
+				</div>
+				<input
+					:value="localShapeIndex"
+					type="range"
+					min="0"
+					:max="canvasShapeOptions.length - 1"
+					step="1"
+					:disabled="disabled"
+					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
+					@input="e => handleShapeChange(Number((e.target as HTMLInputElement).value))"
+				/>
+				<!-- <p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
+					Canvas dimensions and aspect ratio.
+				</p> -->
+			</div>
 
 			<!-- Damping -->
 			<div>
@@ -151,8 +174,9 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
-import type { SimulationConfig } from '@/types'
+import { reactive, watch, computed } from 'vue'
+import type { SimulationConfig, CanvasShape } from '@/types'
+import { CANVAS_SHAPES } from '@/utils/coordinates'
 
 const props = defineProps<{
 	config: SimulationConfig
@@ -167,6 +191,7 @@ const localConfig = reactive({
 	ropeLength: props.config.ropeLength,
 	gravity: props.config.gravity,
 	zoom: props.config.zoom,
+	canvasShape: props.config.canvasShape,
 	damping: props.config.damping,
 	initialTheta: props.config.initialTheta,
 	initialPhi: props.config.initialPhi,
@@ -181,6 +206,7 @@ watch(
 		localConfig.ropeLength = newConfig.ropeLength
 		localConfig.gravity = newConfig.gravity
 		localConfig.zoom = newConfig.zoom
+		localConfig.canvasShape = newConfig.canvasShape
 		localConfig.damping = newConfig.damping
 		localConfig.initialTheta = newConfig.initialTheta
 		localConfig.initialPhi = newConfig.initialPhi
@@ -192,5 +218,15 @@ watch(
 
 const emitUpdate = () => {
 	emit('update', { ...localConfig })
+}
+
+// Canvas shape utilities
+const canvasShapeOptions = Object.entries(CANVAS_SHAPES)
+const localShapeIndex = computed(() => canvasShapeOptions.findIndex(([shape]) => shape === localConfig.canvasShape))
+
+const handleShapeChange = (index: number) => {
+	const [shapeKey] = canvasShapeOptions[index]
+	localConfig.canvasShape = shapeKey as CanvasShape
+	emitUpdate()
 }
 </script>

@@ -12,7 +12,9 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	const state = ref<PendulumState>(simulator.getState())
 	const velocity = ref<Vec3>(simulator.getVelocity())
 	const paintPoints = ref<Point2D[]>(simulator.getPaintPoints())
-	const bounds = ref<BoundsConfig>(calculateBounds(initialConfig.ropeLength, initialConfig.zoom))
+	const bounds = ref<BoundsConfig>(
+		calculateBounds(initialConfig.ropeLength, initialConfig.zoom, initialConfig.canvasShape),
+	)
 
 	const mode = ref<SimulationMode>('realtime')
 	const status = ref<SimulationStatus>('idle')
@@ -149,8 +151,12 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	 */
 	const updateInitialConfig = (newConfig: Partial<SimulationConfig>) => {
 		initialConfig_ref.value = { ...initialConfig_ref.value, ...newConfig }
-		if (newConfig.ropeLength !== undefined || newConfig.zoom !== undefined) {
-			bounds.value = calculateBounds(initialConfig_ref.value.ropeLength, initialConfig_ref.value.zoom)
+		if (newConfig.ropeLength !== undefined || newConfig.zoom !== undefined || newConfig.canvasShape !== undefined) {
+			bounds.value = calculateBounds(
+				initialConfig_ref.value.ropeLength,
+				initialConfig_ref.value.zoom,
+				initialConfig_ref.value.canvasShape,
+			)
 		}
 	}
 
@@ -159,8 +165,12 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	 */
 	const updateRuntimeConfig = (newConfig: Partial<SimulationConfig>) => {
 		simulator.updateConfig(newConfig)
-		if (newConfig.ropeLength !== undefined || newConfig.zoom !== undefined) {
-			bounds.value = calculateBounds(initialConfig_ref.value.ropeLength, initialConfig_ref.value.zoom)
+		if (newConfig.ropeLength !== undefined || newConfig.zoom !== undefined || newConfig.canvasShape !== undefined) {
+			bounds.value = calculateBounds(
+				initialConfig_ref.value.ropeLength,
+				initialConfig_ref.value.zoom,
+				initialConfig_ref.value.canvasShape,
+			)
 		}
 		// Force state update to reflect new config
 		state.value = simulator.getState()
