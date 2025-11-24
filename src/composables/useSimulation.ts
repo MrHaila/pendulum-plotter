@@ -12,7 +12,8 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	const state = ref<PendulumState>(simulator.getState())
 	const velocity = ref<Vec3>(simulator.getVelocity())
 	const paintPoints = ref<Point2D[]>(simulator.getPaintPoints())
-	const bounds = ref<BoundsConfig>(calculateBounds(initialConfig.ropeLength))
+	const zoom = ref(1.0)
+	const bounds = ref<BoundsConfig>(calculateBounds(initialConfig.ropeLength, zoom.value))
 
 	const mode = ref<SimulationMode>('realtime')
 	const status = ref<SimulationStatus>('idle')
@@ -77,8 +78,9 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	const startRealtime = () => {
 		if (status.value === 'running') return
 
-		// If starting from completed state, reset first to start fresh
-		if (status.value === 'completed') {
+		// If starting from completed or idle state, apply config and reset first
+		if (status.value === 'completed' || status.value === 'idle') {
+			simulator.updateConfig(initialConfig_ref.value)
 			simulator.reset()
 			state.value = simulator.getState()
 			velocity.value = simulator.getVelocity()
@@ -126,7 +128,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	 * Complete instant simulation when switching from realtime
 	 */
 	const completeInstant = (remainingSteps: number) => {
-		pause()
+		reset()
 		runInstant(remainingSteps)
 	}
 
@@ -135,6 +137,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	 */
 	const reset = () => {
 		stop()
+		simulator.updateConfig(initialConfig_ref.value)
 		simulator.reset()
 		state.value = simulator.getState()
 		velocity.value = simulator.getVelocity()
@@ -147,17 +150,9 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	 */
 	const updateInitialConfig = (newConfig: Partial<SimulationConfig>) => {
 		initialConfig_ref.value = { ...initialConfig_ref.value, ...newConfig }
-		simulator.updateConfig(newConfig)
 		if (newConfig.ropeLength !== undefined) {
-			bounds.value = calculateBounds(newConfig.ropeLength)
+			bounds.value = calculateBounds(newConfig.ropeLength, zoom.value)
 		}
-		// Reset simulator to reflect new initial conditions and set status to idle
-		stop()
-		simulator.reset()
-		state.value = simulator.getState()
-		velocity.value = simulator.getVelocity()
-		paintPoints.value = [...simulator.getPaintPoints()]
-		status.value = 'idle'
 	}
 
 	/**
@@ -166,7 +161,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	const updateRuntimeConfig = (newConfig: Partial<SimulationConfig>) => {
 		simulator.updateConfig(newConfig)
 		if (newConfig.ropeLength !== undefined) {
-			bounds.value = calculateBounds(newConfig.ropeLength)
+			bounds.value = calculateBounds(newConfig.ropeLength, zoom.value)
 		}
 		// Force state update to reflect new config
 		state.value = simulator.getState()
@@ -180,6 +175,14 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		mode.value = newMode
 	}
 
+	/**
+	 * Set zoom level
+	 */
+	const setZoom = (newZoom: number) => {
+		zoom.value = newZoom
+		bounds.value = calculateBounds(initialConfig_ref.value.ropeLength, newZoom)
+	}
+
 	return {
 		state,
 		velocity,
@@ -188,6 +191,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		bounds,
 		mode,
 		status,
+		zoom,
 		initialConfig: initialConfig_ref,
 		step,
 		runInstant,
@@ -200,5 +204,6 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		updateInitialConfig,
 		updateRuntimeConfig,
 		setMode,
+		setZoom,
 	}
 }

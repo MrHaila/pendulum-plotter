@@ -41,10 +41,10 @@ export function viewportToSimulation(pixelPoint: Point2D, canvasWidth: number, c
  * Calculate bounds configuration to fit pendulum motion within A4
  * For now, use fixed scale based on rope length
  */
-export function calculateBounds(ropeLength: number): BoundsConfig {
+export function calculateBounds(ropeLength: number, zoom: number = 1.0): BoundsConfig {
 	// Scale to fit pendulum swing within 80% of A4 width
 	const maxSwing = ropeLength * 0.9 // Assuming phi can reach ~90 degrees
-	const scale = (A4_WIDTH * 0.8) / (2 * maxSwing)
+	const scale = ((A4_WIDTH * 0.8) / (2 * maxSwing)) * zoom
 
 	return {
 		centerX: 0,

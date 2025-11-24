@@ -1,28 +1,28 @@
 <template>
 	<div>
 		<div class="space-y-3">
-			<!-- Rope Length -->
+			<!-- Zoom -->
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
 					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
-						Suspension Radius
+						Size
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
-						>{{ localConfig.ropeLength.toFixed(2) }} m</span
+						>{{ localZoom.toFixed(2) }}x</span
 					>
 				</div>
 				<input
-					v-model.number="localConfig.ropeLength"
+					v-model.number="localZoom"
 					type="range"
 					min="0.5"
-					max="2"
+					max="5.0"
 					step="0.1"
 					:disabled="disabled"
 					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
-					@input="emitUpdate"
+					@input="emitZoomUpdate"
 				/>
 				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
-					How long the pendulum rope is. Bigger = slower.
+					Scale of the experiment.
 				</p>
 			</div>
 
@@ -157,17 +157,21 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { reactive, watch, ref } from 'vue'
 import type { SimulationConfig } from '@/types'
 
 const props = defineProps<{
 	config: SimulationConfig
+	zoom: number
 	disabled?: boolean
 }>()
 
 const emit = defineEmits<{
 	update: [config: Partial<SimulationConfig>]
+	'update:zoom': [zoom: number]
 }>()
+
+const localZoom = ref(props.zoom)
 
 const localConfig = reactive({
 	ropeLength: props.config.ropeLength,
@@ -194,7 +198,18 @@ watch(
 	{ deep: true },
 )
 
+watch(
+	() => props.zoom,
+	newZoom => {
+		localZoom.value = newZoom
+	},
+)
+
 const emitUpdate = () => {
 	emit('update', { ...localConfig })
+}
+
+const emitZoomUpdate = () => {
+	emit('update:zoom', localZoom.value)
 }
 </script>

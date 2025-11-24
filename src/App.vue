@@ -14,8 +14,10 @@
 					<SidebarSectionHeader label="Experiment Parameters" />
 					<InitialParameterControls
 						:config="initialConfig"
+						:zoom="zoom"
 						:disabled="status === 'running'"
 						@update="handleInitialConfigUpdate"
+						@update:zoom="handleZoomUpdate"
 					/>
 				</section>
 
@@ -85,11 +87,7 @@
 			<!-- Side View Section -->
 			<section class="space-y-3">
 				<SidebarSectionHeader label="XY Planar Projection" />
-				<SideView
-					:position3-d="current3DPosition"
-					:velocity="velocity"
-					:rope-length="currentRopeLength"
-				/>
+				<SideView :position3-d="current3DPosition" :velocity="velocity" :rope-length="currentRopeLength" />
 			</section>
 		</aside>
 	</div>
@@ -139,6 +137,7 @@ const {
 	velocity,
 	mode,
 	status,
+	zoom,
 	initialConfig,
 	reset,
 	runInstant,
@@ -147,6 +146,7 @@ const {
 	resume,
 	updateInitialConfig,
 	setMode,
+	setZoom,
 } = useSimulation(defaultConfig)
 
 // Point count for stats
@@ -239,6 +239,11 @@ const handleModeChange = (newMode: SimulationMode) => {
 
 const handleInitialConfigUpdate = (newConfig: Partial<SimulationConfig>) => {
 	updateInitialConfig(newConfig)
+	reset()
+}
+
+const handleZoomUpdate = (newZoom: number) => {
+	setZoom(newZoom)
 }
 
 const handleTrimStartUpdate = (value: number) => {
