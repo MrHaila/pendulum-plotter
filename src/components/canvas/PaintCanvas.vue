@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue'
 import type { Point2D, BoundsConfig } from '@/types'
 import { simulationToViewport } from '@/utils/coordinates'
 
@@ -77,19 +77,21 @@ const draw = () => {
 
 	const points = props.points
 
-	// Full redraw on reset (points array shrunk)
+	// Full redraw on reset (points array shrunk or jumped significantly)
 	if (points.length < lastDrawnCount) {
 		ctx.clearRect(0, 0, canvasWidth.value, canvasHeight.value)
 		lastDrawnCount = 0
 	}
 
 	// Need at least 2 points to draw
-	if (points.length < 2) return
-
-	// Configure styles once
-	if (lastDrawnCount === 0) {
-		configureContext(ctx)
+	if (points.length < 2) {
+		// Update lastDrawnCount even when we can't draw yet
+		lastDrawnCount = points.length
+		return
 	}
+
+	// Always configure styles to ensure correct theme colors
+	configureContext(ctx)
 
 	// Draw only new segments
 	const startIdx = Math.max(1, lastDrawnCount)
@@ -119,8 +121,27 @@ watch(
 	{ deep: true },
 )
 
+// Watch for theme changes and force redraw
+const themeObserver = new MutationObserver(() => {
+	// Force full redraw when theme changes
+	lastDrawnCount = 0
+	draw()
+})
+
 // Initial draw
-onMounted(draw)
+onMounted(() => {
+	draw()
+	// Observe theme changes
+	themeObserver.observe(document.documentElement, {
+		attributes: true,
+		attributeFilter: ['class'],
+	})
+})
+
+// Cleanup observer
+onBeforeUnmount(() => {
+	themeObserver.disconnect()
+})
 </script>
 
 <style scoped>

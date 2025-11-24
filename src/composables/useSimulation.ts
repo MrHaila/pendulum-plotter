@@ -24,6 +24,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	let lastFrameTime = 0
 	const targetFps = 60
 	const frameInterval = 1000 / targetFps
+	let targetStopIndex: number | null = null // For auto-stopping at trim end
 
 	/**
 	 * Paint points in A4 coordinate space (595x842)
@@ -61,6 +62,12 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	 */
 	const animationLoop = (timestamp: number) => {
 		if (status.value !== 'running') {
+			return
+		}
+
+		// Check if we've reached the target stop index
+		if (targetStopIndex !== null && paintPoints.value.length >= targetStopIndex) {
+			stop()
 			return
 		}
 
@@ -122,6 +129,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 			cancelAnimationFrame(animationFrameId)
 			animationFrameId = null
 		}
+		targetStopIndex = null
 		status.value = 'completed'
 	}
 
@@ -138,6 +146,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	 */
 	const reset = () => {
 		stop()
+		targetStopIndex = null
 		simulator.updateConfig(initialConfig_ref.value)
 		simulator.reset()
 		state.value = simulator.getState()
@@ -184,6 +193,38 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		mode.value = newMode
 	}
 
+	/**
+	 * Start real-time simulation with trim bounds (for auto-play from shared links)
+	 * Pre-runs simulation up to trimStart, then animates from trimStart to trimEnd
+	 */
+	const startRealtimeWithTrim = (trimStart: number, trimEnd: number) => {
+		if (status.value === 'running') return
+
+		// Reset and apply config
+		simulator.updateConfig(initialConfig_ref.value)
+		simulator.reset()
+
+		// Pre-run up to trimStart silently
+		if (trimStart > 0) {
+			for (let i = 0; i < trimStart; i++) {
+				simulator.step()
+			}
+		}
+
+		// Update state after pre-run
+		state.value = simulator.getState()
+		velocity.value = simulator.getVelocity()
+		paintPoints.value = [...simulator.getPaintPoints()]
+
+		// Set target stop index
+		targetStopIndex = trimEnd
+
+		// Start animation from this point
+		status.value = 'running'
+		lastFrameTime = performance.now()
+		animationFrameId = requestAnimationFrame(animationLoop)
+	}
+
 	return {
 		state,
 		velocity,
@@ -196,6 +237,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		step,
 		runInstant,
 		startRealtime,
+		startRealtimeWithTrim,
 		pause,
 		resume,
 		stop,
