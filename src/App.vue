@@ -25,6 +25,7 @@
 					<ControlPanel
 						:mode="mode"
 						:status="status"
+						:has-content="pointCount > 1"
 						@reset="handleReset"
 						@generate="handleGenerate"
 						@start="handleStart"
