@@ -1,5 +1,4 @@
-import type { Point2D } from '@/types'
-import { A4_WIDTH, A4_HEIGHT } from './coordinates'
+import type { Point2D, BoundsConfig } from '@/types'
 
 /**
  * Convert array of Point2D to SVG path string
@@ -19,16 +18,16 @@ export function paintPointsToSVGPath(points: Point2D[]): string {
 }
 
 /**
- * Generate complete SVG document with A4 dimensions (595x842 points at 72 DPI)
+ * Generate complete SVG document with dynamic canvas dimensions
  */
-export function generateSVG(points: Point2D[]): string {
+export function generateSVG(points: Point2D[], bounds: BoundsConfig): string {
 	const path = paintPointsToSVGPath(points)
 
 	return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-	width="${A4_WIDTH}pt"
-	height="${A4_HEIGHT}pt"
-	viewBox="0 0 ${A4_WIDTH} ${A4_HEIGHT}"
+	width="${bounds.canvasWidth}pt"
+	height="${bounds.canvasHeight}pt"
+	viewBox="0 0 ${bounds.canvasWidth} ${bounds.canvasHeight}"
 	version="1.1"
 	xmlns="http://www.w3.org/2000/svg"
 >
@@ -48,8 +47,8 @@ export function generateSVG(points: Point2D[]): string {
 /**
  * Trigger browser download of SVG file
  */
-export function downloadSVG(points: Point2D[], filename = 'pendulum-plotter.svg'): void {
-	const svgContent = generateSVG(points)
+export function downloadSVG(points: Point2D[], bounds: BoundsConfig, filename = 'pendulum-plotter.svg'): void {
+	const svgContent = generateSVG(points, bounds)
 	const blob = new Blob([svgContent], { type: 'image/svg+xml' })
 	const url = URL.createObjectURL(blob)
 

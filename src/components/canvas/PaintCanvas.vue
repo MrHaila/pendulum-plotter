@@ -39,11 +39,17 @@ const canvasRef = ref<HTMLCanvasElement | null>(null)
 
 // Canvas backing store dimensions (high DPI) - reactive to bounds changes
 const dpr = window.devicePixelRatio || 1
-const baseWidth = 600 // Base display width in pixels
-const aspectRatio = computed(() => props.bounds.canvasHeight / props.bounds.canvasWidth)
-const baseHeight = computed(() => Math.floor(baseWidth * aspectRatio.value)) // Dynamic aspect ratio based on shape
+const baseSize = 600 // Base size for the constrained dimension
 
-const canvasWidth = computed(() => baseWidth * dpr)
+// Detect orientation and calculate dimensions accordingly
+const isLandscape = computed(() => props.bounds.canvasWidth > props.bounds.canvasHeight)
+const aspectRatio = computed(() => props.bounds.canvasHeight / props.bounds.canvasWidth)
+
+// For landscape: fixed height, calculate width. For portrait: fixed width, calculate height
+const baseWidth = computed(() => (isLandscape.value ? baseSize / aspectRatio.value : baseSize))
+const baseHeight = computed(() => (isLandscape.value ? baseSize : baseSize * aspectRatio.value))
+
+const canvasWidth = computed(() => baseWidth.value * dpr)
 const canvasHeight = computed(() => baseHeight.value * dpr)
 const displayWidth = baseWidth
 const displayHeight = baseHeight

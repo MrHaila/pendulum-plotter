@@ -57,7 +57,7 @@
 		</aside>
 
 		<!-- Main Canvas Area -->
-		<main class="flex-1 flex items-center justify-center p-8 bg-base-50 dark:bg-base-900 relative">
+		<main class="flex-1 flex items-center justify-center p-8 bg-base-50 dark:bg-base-900 relative overflow-hidden">
 			<RawDataDisplay :points="trimmedCanvasPoints" />
 			<PaintCanvas :points="trimmedCanvasPoints" :bounds="bounds" :show-placeholder="showCanvasPlaceholder" />
 		</main>
@@ -263,10 +263,10 @@ const handleAutoTrim = () => {
 }
 
 const handleExportSVG = () => {
-	downloadSVG(trimmedCanvasPoints.value)
+	downloadSVG(trimmedCanvasPoints.value, bounds.value)
 }
 
 const handleExportPNG = () => {
-	downloadPNG(trimmedCanvasPoints.value)
+	downloadPNG(trimmedCanvasPoints.value, bounds.value)
 }
 </script>

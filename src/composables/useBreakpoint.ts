@@ -5,7 +5,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
  * Minimum width: 1350px (wider sidebars + canvas spacing)
  */
 export function useBreakpoint() {
-	const MIN_WIDTH = 1350
+	const MIN_WIDTH = 1250
 	const windowWidth = ref(0)
 	const isTooNarrow = ref(false)
 

@@ -1,11 +1,12 @@
-import type { Point2D } from '@/types'
-import { A4_WIDTH, A4_HEIGHT, simulationToViewport } from './coordinates'
+import type { Point2D, BoundsConfig } from '@/types'
+import { simulationToViewport } from './coordinates'
 
 /**
  * Render points to canvas and export as PNG
  */
 export function downloadPNG(
 	points: Point2D[],
+	bounds: BoundsConfig,
 	filename = 'pendulum-plotter.png',
 	scale = 2, // Export at 2x resolution for quality
 ): void {
@@ -14,10 +15,10 @@ export function downloadPNG(
 		return
 	}
 
-	// Create offscreen canvas at A4 dimensions scaled up
+	// Create offscreen canvas at canvas dimensions scaled up
 	const canvas = document.createElement('canvas')
-	const width = A4_WIDTH * scale
-	const height = A4_HEIGHT * scale
+	const width = bounds.canvasWidth * scale
+	const height = bounds.canvasHeight * scale
 	canvas.width = width
 	canvas.height = height
 
@@ -43,7 +44,7 @@ export function downloadPNG(
 	// Draw path
 	ctx.beginPath()
 	for (let i = 0; i < points.length; i++) {
-		const point = simulationToViewport(points[i], width, height)
+		const point = simulationToViewport(points[i], width, height, bounds)
 		if (i === 0) {
 			ctx.moveTo(point.x, point.y)
 		} else {
