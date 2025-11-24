@@ -244,6 +244,7 @@ const handleInitialConfigUpdate = (newConfig: Partial<SimulationConfig>) => {
 
 const handleZoomUpdate = (newZoom: number) => {
 	setZoom(newZoom)
+	reset()
 }
 
 const handleTrimStartUpdate = (value: number) => {
