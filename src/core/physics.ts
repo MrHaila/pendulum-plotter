@@ -64,10 +64,7 @@ export function cartesianToSpherical(pos: Vec3): { theta: number; phi: number } 
 /**
  * Convert Cartesian velocity to spherical velocity
  */
-export function cartesianToSphericalVelocity(
-	pos: Vec3,
-	vel: Vec3,
-): { thetaDot: number; phiDot: number } {
+export function cartesianToSphericalVelocity(pos: Vec3, vel: Vec3): { thetaDot: number; phiDot: number } {
 	const r2 = pos.x * pos.x + pos.y * pos.y + pos.z * pos.z
 	const rho2 = pos.x * pos.x + pos.z * pos.z // horizontal radius squared
 
@@ -92,11 +89,7 @@ export function cartesianToSphericalVelocity(
  * Calculate accelerations for Cartesian pendulum
  * Uses Lagrange multipliers to enforce rod length constraint
  */
-export function calculateCartesianAccelerations(
-	pos: Vec3,
-	vel: Vec3,
-	config: SimulationConfig,
-): Vec3 {
+export function calculateCartesianAccelerations(pos: Vec3, vel: Vec3, config: SimulationConfig): Vec3 {
 	const { ropeLength: L, gravity: g, damping: k } = config
 	const m = 1 // Mass assumed 1
 
@@ -105,27 +98,23 @@ export function calculateCartesianAccelerations(
 	// Equation of motion: a = g - (k/m)v - (T/mL)pos
 	// Lambda = T/mL = (g.pos + v^2) / L^2
 	// g vector is (0, g, 0)
-	
+
 	const v2 = vel.x * vel.x + vel.y * vel.y + vel.z * vel.z
 	const gDotPos = g * pos.y
-	
+
 	const lambda = (gDotPos + v2) / (L * L)
-	
+
 	return {
 		x: -lambda * pos.x - (k / m) * vel.x,
 		y: g - lambda * pos.y - (k / m) * vel.y,
-		z: -lambda * pos.z - (k / m) * vel.z
+		z: -lambda * pos.z - (k / m) * vel.z,
 	}
 }
 
 /**
  * 4th-order Runge-Kutta integration step for Cartesian coordinates
  */
-export function integrateCartesian(
-	pos: Vec3,
-	vel: Vec3,
-	config: SimulationConfig,
-): { pos: Vec3; vel: Vec3 } {
+export function integrateCartesian(pos: Vec3, vel: Vec3, config: SimulationConfig): { pos: Vec3; vel: Vec3 } {
 	const { timestep: dt } = config
 
 	type State = { p: Vec3; v: Vec3 }
@@ -152,7 +141,7 @@ export function integrateCartesian(
 	})
 
 	const s0 = { p: pos, v: vel }
-	
+
 	const k1 = derivative(s0)
 	const k2 = derivative(addState(s0, k1, dt / 2))
 	const k3 = derivative(addState(s0, k2, dt / 2))
@@ -173,7 +162,7 @@ export function integrateCartesian(
 	// Enforce length constraint explicitly to prevent drift
 	const currentLen = Math.sqrt(newPos.x * newPos.x + newPos.y * newPos.y + newPos.z * newPos.z)
 	const scale = config.ropeLength / currentLen
-	
+
 	newPos.x *= scale
 	newPos.y *= scale
 	newPos.z *= scale

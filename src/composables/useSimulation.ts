@@ -12,8 +12,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	const state = ref<PendulumState>(simulator.getState())
 	const velocity = ref<Vec3>(simulator.getVelocity())
 	const paintPoints = ref<Point2D[]>(simulator.getPaintPoints())
-	const zoom = ref(1.0)
-	const bounds = ref<BoundsConfig>(calculateBounds(initialConfig.ropeLength, zoom.value))
+	const bounds = ref<BoundsConfig>(calculateBounds(initialConfig.ropeLength, initialConfig.zoom))
 
 	const mode = ref<SimulationMode>('realtime')
 	const status = ref<SimulationStatus>('idle')
@@ -150,8 +149,8 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	 */
 	const updateInitialConfig = (newConfig: Partial<SimulationConfig>) => {
 		initialConfig_ref.value = { ...initialConfig_ref.value, ...newConfig }
-		if (newConfig.ropeLength !== undefined) {
-			bounds.value = calculateBounds(newConfig.ropeLength, zoom.value)
+		if (newConfig.ropeLength !== undefined || newConfig.zoom !== undefined) {
+			bounds.value = calculateBounds(initialConfig_ref.value.ropeLength, initialConfig_ref.value.zoom)
 		}
 	}
 
@@ -160,8 +159,8 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	 */
 	const updateRuntimeConfig = (newConfig: Partial<SimulationConfig>) => {
 		simulator.updateConfig(newConfig)
-		if (newConfig.ropeLength !== undefined) {
-			bounds.value = calculateBounds(newConfig.ropeLength, zoom.value)
+		if (newConfig.ropeLength !== undefined || newConfig.zoom !== undefined) {
+			bounds.value = calculateBounds(initialConfig_ref.value.ropeLength, initialConfig_ref.value.zoom)
 		}
 		// Force state update to reflect new config
 		state.value = simulator.getState()
@@ -175,14 +174,6 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		mode.value = newMode
 	}
 
-	/**
-	 * Set zoom level
-	 */
-	const setZoom = (newZoom: number) => {
-		zoom.value = newZoom
-		bounds.value = calculateBounds(initialConfig_ref.value.ropeLength, newZoom)
-	}
-
 	return {
 		state,
 		velocity,
@@ -191,7 +182,6 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		bounds,
 		mode,
 		status,
-		zoom,
 		initialConfig: initialConfig_ref,
 		step,
 		runInstant,
@@ -204,6 +194,5 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		updateInitialConfig,
 		updateRuntimeConfig,
 		setMode,
-		setZoom,
 	}
 }

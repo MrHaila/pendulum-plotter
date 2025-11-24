@@ -17,7 +17,7 @@ export class PendulumSimulator {
 	constructor(config: SimulationConfig) {
 		this.config = config
 		this.time = 0
-		
+
 		// Initialize state from spherical config
 		this.pos = sphericalToCartesian(config.initialTheta, config.initialPhi, config.ropeLength)
 		this.vel = sphericalToCartesianVelocity(
@@ -48,11 +48,7 @@ export class PendulumSimulator {
 	 */
 	reset(): void {
 		this.time = 0
-		this.pos = sphericalToCartesian(
-			this.config.initialTheta,
-			this.config.initialPhi,
-			this.config.ropeLength,
-		)
+		this.pos = sphericalToCartesian(this.config.initialTheta, this.config.initialPhi, this.config.ropeLength)
 		this.vel = sphericalToCartesianVelocity(
 			this.config.initialTheta,
 			this.config.initialPhi,

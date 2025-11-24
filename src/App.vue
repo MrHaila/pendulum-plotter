@@ -14,10 +14,8 @@
 					<SidebarSectionHeader label="Experiment Parameters" />
 					<InitialParameterControls
 						:config="initialConfig"
-						:zoom="zoom"
 						:disabled="status === 'running'"
 						@update="handleInitialConfigUpdate"
-						@update:zoom="handleZoomUpdate"
 					/>
 				</section>
 
@@ -124,6 +122,7 @@ const defaultConfig: SimulationConfig = {
 	gravity: 9.81,
 	damping: 0.05,
 	timestep: 0.01,
+	zoom: 2.0,
 	initialTheta: 0.5,
 	initialPhi: Math.PI / 4,
 	initialThetaDot: 0.3,
@@ -137,7 +136,6 @@ const {
 	velocity,
 	mode,
 	status,
-	zoom,
 	initialConfig,
 	reset,
 	runInstant,
@@ -146,7 +144,6 @@ const {
 	resume,
 	updateInitialConfig,
 	setMode,
-	setZoom,
 } = useSimulation(defaultConfig)
 
 // Point count for stats
@@ -239,11 +236,6 @@ const handleModeChange = (newMode: SimulationMode) => {
 
 const handleInitialConfigUpdate = (newConfig: Partial<SimulationConfig>) => {
 	updateInitialConfig(newConfig)
-	reset()
-}
-
-const handleZoomUpdate = (newZoom: number) => {
-	setZoom(newZoom)
 	reset()
 }
 

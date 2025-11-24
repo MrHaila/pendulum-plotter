@@ -76,7 +76,12 @@
 		</div>
 
 		<!-- Reset Button (always visible) -->
-		<AppButton class="w-full px-4 py-2" variant="secondary" :disabled="status === 'running' || status === 'idle'" @click="$emit('reset')">
+		<AppButton
+			class="w-full px-4 py-2"
+			variant="secondary"
+			:disabled="status === 'running' || status === 'idle'"
+			@click="$emit('reset')"
+		>
 			Clear Experiment
 		</AppButton>
 	</div>

@@ -27,6 +27,7 @@ export interface SimulationConfig {
 	gravity: number // m/s^2
 	damping: number // damping coefficient (0 = no damping)
 	timestep: number // seconds per step
+	zoom: number // scale factor for visualization
 	initialTheta: number // radians
 	initialPhi: number // radians
 	initialThetaDot: number // rad/s

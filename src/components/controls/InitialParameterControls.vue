@@ -5,25 +5,25 @@
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
 					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
-						Size
+						Experiment Scale
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
-						>{{ localZoom.toFixed(2) }}x</span
+						>{{ localConfig.zoom.toFixed(2) }}x</span
 					>
 				</div>
 				<input
-					v-model.number="localZoom"
+					v-model.number="localConfig.zoom"
 					type="range"
 					min="0.5"
 					max="5.0"
 					step="0.1"
 					:disabled="disabled"
 					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
-					@input="emitZoomUpdate"
+					@input="emitUpdate"
 				/>
-				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
+				<!-- <p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
 					Scale of the experiment.
-				</p>
+				</p> -->
 			</div>
 
 			<!-- Gravity not editable on purpose -->
@@ -48,16 +48,14 @@
 					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@input="emitUpdate"
 				/>
-				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
-					Air resistance. Bigger = stop faster.
-				</p>
+				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">Air resistance. Bigger = stop faster.</p>
 			</div>
 
 			<!-- Initial Theta -->
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
 					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
-						Initial Angle θ
+						Rotation θ
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
 						>{{ localConfig.initialTheta.toFixed(2) }} rad</span
@@ -73,16 +71,16 @@
 					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@input="emitUpdate"
 				/>
-				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
-					Starting distance from the center.
-				</p>
+				<!-- <p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
+					Starting angle around the center.
+				</p> -->
 			</div>
 
 			<!-- Initial Phi -->
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
 					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
-						Initial Angle φ
+						Starting Height φ
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
 						>{{ localConfig.initialPhi.toFixed(2) }} rad</span
@@ -93,21 +91,21 @@
 					type="range"
 					min="0"
 					max="1.57"
-					step="0.1"
+					step="0.01"
 					:disabled="disabled"
 					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@input="emitUpdate"
 				/>
-				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
+				<!-- <p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
 					Starting rotation around the center.
-				</p>
+				</p> -->
 			</div>
 
 			<!-- Initial Theta Dot -->
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
 					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
-						Initial Velocity θ̇
+						Starting Spin θ̇
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
 						>{{ localConfig.initialThetaDot.toFixed(2) }} rad/s</span
@@ -116,16 +114,14 @@
 				<input
 					v-model.number="localConfig.initialThetaDot"
 					type="range"
-					min="-5"
-					max="5"
-					step="0.1"
+					min="-2.5"
+					max="2.5"
+					step="0.01"
 					:disabled="disabled"
 					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@input="emitUpdate"
 				/>
-				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
-					Initial push away from the center.
-				</p>
+				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">Initial push away from the center.</p>
 			</div>
 
 			<!-- Initial Phi Dot -->
@@ -148,34 +144,29 @@
 					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
 					@input="emitUpdate"
 				/>
-				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">
-					Initial spin speed around the center.
-				</p>
+				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">Initial spin speed around the center.</p>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { reactive, watch, ref } from 'vue'
+import { reactive, watch } from 'vue'
 import type { SimulationConfig } from '@/types'
 
 const props = defineProps<{
 	config: SimulationConfig
-	zoom: number
 	disabled?: boolean
 }>()
 
 const emit = defineEmits<{
 	update: [config: Partial<SimulationConfig>]
-	'update:zoom': [zoom: number]
 }>()
-
-const localZoom = ref(props.zoom)
 
 const localConfig = reactive({
 	ropeLength: props.config.ropeLength,
 	gravity: props.config.gravity,
+	zoom: props.config.zoom,
 	damping: props.config.damping,
 	initialTheta: props.config.initialTheta,
 	initialPhi: props.config.initialPhi,
@@ -189,6 +180,7 @@ watch(
 	newConfig => {
 		localConfig.ropeLength = newConfig.ropeLength
 		localConfig.gravity = newConfig.gravity
+		localConfig.zoom = newConfig.zoom
 		localConfig.damping = newConfig.damping
 		localConfig.initialTheta = newConfig.initialTheta
 		localConfig.initialPhi = newConfig.initialPhi
@@ -198,18 +190,7 @@ watch(
 	{ deep: true },
 )
 
-watch(
-	() => props.zoom,
-	newZoom => {
-		localZoom.value = newZoom
-	},
-)
-
 const emitUpdate = () => {
 	emit('update', { ...localConfig })
-}
-
-const emitZoomUpdate = () => {
-	emit('update:zoom', localZoom.value)
 }
 </script>
