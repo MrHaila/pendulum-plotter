@@ -35,10 +35,10 @@
 					/>
 				</section>
 
-				<!-- Export Section -->
+				<!-- Path Trimming Section -->
 				<section class="space-y-3">
-					<SidebarSectionHeader label="Export" />
-					<ExportPanel
+					<SidebarSectionHeader label="Data Cleanup" />
+					<TrimControls
 						:point-count="pointCount"
 						:trim-start="trimStart"
 						:trim-end="trimEnd"
@@ -46,6 +46,14 @@
 						@auto-trim="handleAutoTrim"
 						@update:trim-start="handleTrimStartUpdate"
 						@update:trim-end="handleTrimEndUpdate"
+					/>
+				</section>
+
+				<!-- Export Section -->
+				<section class="space-y-3">
+					<SidebarSectionHeader label="Share Findings" />
+					<ExportPanel
+						:disabled="status === 'running' || status === 'idle'"
 						@export-svg="handleExportSVG"
 						@export-png="handleExportPNG"
 					/>
@@ -103,6 +111,7 @@ import { downloadSVG } from '@/utils/svg'
 import { downloadPNG } from '@/utils/png'
 import ControlPanel from '@/components/controls/ControlPanel.vue'
 import InitialParameterControls from '@/components/controls/InitialParameterControls.vue'
+import TrimControls from '@/components/controls/TrimControls.vue'
 import ExportPanel from '@/components/controls/ExportPanel.vue'
 import DarkModeToggle from '@/components/controls/DarkModeToggle.vue'
 import SidebarSectionHeader from '@/components/controls/SidebarSectionHeader.vue'
