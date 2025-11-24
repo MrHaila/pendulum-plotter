@@ -70,13 +70,13 @@
 			</AppButton>
 
 			<!-- Pause Button -->
-			<AppButton v-if="status === 'running'" class="w-full px-4 py-2" variant="secondary" @click="$emit('pause')">
+			<AppButton v-if="status === 'running'" class="w-full px-4 py-2" variant="primary" @click="$emit('pause')">
 				Stop
 			</AppButton>
 		</div>
 
 		<!-- Reset Button (always visible) -->
-		<AppButton class="w-full px-4 py-2" :disabled="status === 'running' || status === 'idle'" @click="$emit('reset')">
+		<AppButton class="w-full px-4 py-2" variant="secondary" :disabled="status === 'running' || status === 'idle'" @click="$emit('reset')">
 			Clear Experiment
 		</AppButton>
 	</div>

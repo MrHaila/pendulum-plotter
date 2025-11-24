@@ -12,9 +12,9 @@
 				<div class="text-[140px] leading-6 text-[#a54f2a]">&ldquo;</div>
 				<div class="text-lg space-y-5">
 					<p>I don’t trust fate. I control it.</p>
-					<p>I dial in the experiment, press <span class="text-accent-primary-300">START</span>, and watch.</p>
-					<p>The pendulum swings, dripping color, sketching a geometry that feels both alien and primal.</p>
-					<p>The pendulum swings, drawing a rhythm, tracing truth.</p>
+					<p>I dial in the experiment, press <span class="text-accent-primary-300">start</span>, and watch.</p>
+					<!-- <p>The pendulum swings, dripping color, sketching a geometry that feels both alien and primal.</p>
+					<p>The pendulum swings, drawing a rhythm, tracing truth.</p> -->
 					<p>The pendulum swings, and I watch, and I record.</p>
 					<p>And then I <span class="text-accent-primary-300">export</span>.</p>
 				</div>
