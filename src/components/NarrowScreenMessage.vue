@@ -4,12 +4,11 @@
 		<div class="max-w-md text-center space-y-4 px-6">
 			<div class="text-6xl">📐</div>
 			<h1 class="text-lg font-display font-light tracking-wider uppercase text-base-800 dark:text-base-100">
-				Viewport Constraint
+				Viewport Too Small
 			</h1>
 			<p class="text-sm font-mono font-light text-base-500 dark:text-base-400">
-				This pendulum plotter requires a minimum screen width of
-				<strong class="text-base-800 dark:text-base-100">{{ minWidth }}px</strong> to display the controls, canvas, and
-				diagnostic views.
+				This is a super seriously scientific project and thus requires a minimum screen width of
+				<strong class="text-base-800 dark:text-base-100">{{ minWidth }}px</strong>.
 			</p>
 			<p class="text-sm font-mono font-light text-base-500 dark:text-base-400">
 				Please resize your window or use a larger display.
