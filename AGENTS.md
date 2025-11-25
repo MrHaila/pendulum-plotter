@@ -111,9 +111,10 @@ All coordinate transforms in `/src/utils/coordinates.ts`
 
 ```text
 /components
-  /debug      # Top-down, side views
-  /controls   # Parameter inputs
-  /canvas     # Main output, debug canvas
+  /canvas     # Main output canvas
+  /common     # Shared UI components (AppButton)
+  /controls   # Parameter inputs, export, sharing
+  /debug      # Diagnostic views (TopDownView, SideView, RuntimeStats, RawDataDisplay)
 ```
 
 Each component card-style, independently iterable.
@@ -146,14 +147,22 @@ Follow existing style: concise, lowercase, imperative mood.
 #### physics.ts
 
 - `sphericalToCartesian()`: Spherical → 3D Cartesian conversion
-- `calculateAccelerations()`: Lagrangian mechanics (theta'', phi'')
-- `integrateRK4()`: 4th-order Runge-Kutta timestep integration
+- `sphericalToCartesianVelocity()`: Spherical velocity → Cartesian velocity
+- `cartesianToSpherical()`: Cartesian → Spherical conversion
+- `cartesianToSphericalVelocity()`: Cartesian velocity → Spherical velocity
+- `calculateCartesianAccelerations()`: Lagrange multiplier constraint enforcement
+- `integrateCartesian()`: 4th-order Runge-Kutta timestep integration
 
 #### PendulumSimulator.ts
 
-- Encapsulates simulation state and stepping
+- Encapsulates simulation state and stepping (Cartesian internally, spherical for UI)
 - `step()`: Advance + collect paint points
-- `reset()`, `updateConfig()`, `getState()`, `getPaintPoints()`
+- `reset()`, `updateConfig()`, `getState()`, `getPaintPoints()`, `getVelocity()`
+
+#### trimming.ts
+
+- `autoTrimLine()`: Automatically detect trim points based on line intersections
+- `TrimOverrides`, `TrimmedRange` interfaces for trim state management
 
 ### Composables (`/src/composables`)
 
@@ -162,26 +171,52 @@ Follow existing style: concise, lowercase, imperative mood.
 - Vue reactive bridge to PendulumSimulator
 - Modes: `instant` (batch steps) | `realtime` (60 FPS loop)
 - Status: `idle` | `running` | `paused` | `completed`
-- Exports `canvasPoints` (A4 coords), state, control methods
-- Methods: `runInstant()`, `startRealtime()`, `pause()`, `resume()`, `stop()`, `reset()`
+- Exports: `canvasPoints`, `paintPoints`, `state`, `velocity`, `bounds`, `mode`, `status`, `initialConfig`
+- Methods: `step()`, `runInstant()`, `start()`, `pause()`, `resume()`, `stop()`, `completeInstant()`, `reset()`, `updateInitialConfig()`, `updateRuntimeConfig()`, `setMode()`, `setTargetStopIndex()`
 
 #### useBreakpoint.ts
 
-- Responsive detection: `isTooNarrow` (< 1200px)
-- Exports `windowWidth`, `minWidth`
+- Responsive detection: `isTooNarrow` (< 1250px)
+- Exports `windowWidth`, `isTooNarrow`, `minWidth`
+
+#### useAppInitialization.ts
+
+- Parses query parameters for shared link loading
+- Returns `AppInitialState` with config, mode, trim settings, autoPlay flag
+
+#### useAppMode.ts
+
+- Manages app mode state: `manual` vs `auto-run`
+- `manual`: Default mode, trim resets on each run
+- `auto-run`: From shared link, preserves trim settings
 
 ### Utilities (`/src/utils`)
 
 #### coordinates.ts
 
-- `groundToCanvas()`: Physics (X,Z) → A4 (595×842pt)
-- `simulationToViewport()`: A4 → browser pixels
-- `calculateBounds()`: Scale/offset for pendulum in A4 space
+- `A4_WIDTH`, `A4_HEIGHT`: Standard A4 dimensions in points
+- `CANVAS_SHAPES`: Configuration for different canvas aspect ratios
+- `groundToCanvas()`: Physics (X,Z) → canvas coordinates
+- `simulationToViewport()`: Canvas → browser pixels
+- `viewportToSimulation()`: Browser pixels → canvas coordinates
+- `calculateBounds()`: Scale/offset for pendulum based on rope length and zoom
 
 #### svg.ts
 
-- `generateSVG()`: Create SVG document from paint points
+- `paintPointsToSVGPath()`: Convert points to SVG path string
+- `generateSVG()`: Create complete SVG document
 - `downloadSVG()`: Trigger browser download
+
+#### png.ts
+
+- `downloadPNG()`: Render canvas to PNG and trigger download (2x resolution)
+
+#### shareLink.ts
+
+- `encodeShareLink()`: Encode simulation state to URL
+- `decodeShareLink()`: Parse and validate shared state from URL
+- `getShareQueryParam()`: Get share parameter from current URL
+- `copyToClipboard()`: Copy text to clipboard
 
 ### Components
 
@@ -189,19 +224,28 @@ Follow existing style: concise, lowercase, imperative mood.
 
 **canvas/PaintCanvas.vue** - Main output canvas, incremental rendering (only draws new segments)
 
-**controls/ControlPanel.vue** - Mode toggle, playback buttons, export
-**controls/InitialParameterControls.vue** - Pre-simulation sliders (rope, gravity, initial conditions)
-**controls/RuntimeParameterControls.vue** - Read-only state display during playback
+**controls/ControlPanel.vue** - Mode toggle, playback buttons
+**controls/InitialParameterControls.vue** - Pre-simulation sliders (rope, gravity, zoom, canvas shape, initial conditions)
+**controls/TrimControls.vue** - Trim range sliders and auto-trim button
+**controls/ExportPanel.vue** - Export buttons (SVG, PNG, Share)
+**controls/ShareModal.vue** - Share link generation with preview
+**controls/DarkModeToggle.vue** - Dark/light mode switcher
+**controls/SidebarSectionHeader.vue** - Styled section headers
 
 **debug/TopDownView.vue** - XZ plane orthographic view
 **debug/SideView.vue** - XY plane orthographic view
 **debug/RawDataDisplay.vue** - Overlay grid of raw point coords
+**debug/RuntimeStats.vue** - Current simulation state display (angles, velocities, time, point count)
+
+**common/AppButton.vue** - Reusable styled button component
 
 **NarrowScreenMessage.vue** - Responsive breakpoint message
 
 ### Types (`/src/types/index.ts`)
 
-- `Vec2`, `Vec3`: Vector types
+- `Vec2`, `Vec3`, `Point2D`: Vector/point types
 - `PendulumState`: theta, phi, angular velocities, time
-- `SimulationConfig`: rope length, gravity, damping, initial conditions
-- `BoundsConfig`: Canvas scaling
+- `SimulationConfig`: rope length, gravity, damping, timestep, zoom, canvasShape, initial conditions
+- `BoundsConfig`: Canvas scaling (centerX, centerZ, scale, canvasWidth, canvasHeight)
+- `CanvasShape`: Union type for canvas aspect ratios (`square-center`, `a4-portrait`, `a4-landscape`, `16x9-portrait`, `16x9-landscape`)
+- `AppMode`: Application mode (`manual` | `auto-run`)
