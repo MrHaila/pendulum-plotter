@@ -25,7 +25,8 @@
 					<ControlPanel
 						:mode="mode"
 						:status="status"
-						:has-content="pointCount > 1"
+						:has-content="pointCount > 0"
+						:app-mode="appMode"
 						@reset="handleReset"
 						@generate="handleGenerate"
 						@start="handleStart"
@@ -119,12 +120,13 @@
 import { computed, ref, watch, onMounted } from 'vue'
 import { useSimulation } from '@/composables/useSimulation'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import { useAppMode } from '@/composables/useAppMode'
+import { useAppInitialization } from '@/composables/useAppInitialization'
 import type { SimulationMode } from '@/composables/useSimulation'
 import { sphericalToCartesian } from '@/core/physics'
 import { autoTrimLine, type TrimOverrides } from '@/core/trimming'
 import { downloadSVG } from '@/utils/svg'
 import { downloadPNG } from '@/utils/png'
-import { getShareQueryParam, decodeShareLink } from '@/utils/shareLink'
 import ControlPanel from '@/components/controls/ControlPanel.vue'
 import InitialParameterControls from '@/components/controls/InitialParameterControls.vue'
 import TrimControls from '@/components/controls/TrimControls.vue'
@@ -157,6 +159,17 @@ const defaultConfig: SimulationConfig = {
 	initialPhiDot: 0,
 }
 
+// Initialize app state from query params or defaults
+const initialState = useAppInitialization(defaultConfig)
+
+// App mode management (manual vs auto-run)
+const { mode: appMode, isManualMode, setManualMode, setAutoRunMode } = useAppMode()
+
+// Set auto-run mode if loading from shared link
+if (initialState.isFromSharedLink && initialState.autoPlay) {
+	setAutoRunMode()
+}
+
 const {
 	canvasPoints,
 	paintPoints,
@@ -168,45 +181,42 @@ const {
 	initialConfig,
 	reset,
 	runInstant,
-	startRealtime,
-	startRealtimeWithTrim,
+	start,
 	pause,
 	resume,
 	updateInitialConfig,
 	setMode,
-} = useSimulation(defaultConfig)
+	setTargetStopIndex,
+} = useSimulation(initialState.config)
 
 // Point count for stats
 const pointCount = computed(() => paintPoints.value.length)
 
 // Share modal state
 const showShareModal = ref(false)
-const instantSteps = ref(5000)
+const instantSteps = ref(initialState.steps)
 
 const hasPlaceholderBeenDismissed = ref(false)
 
 const showCanvasPlaceholder = computed(
-	() => !hasPlaceholderBeenDismissed.value && status.value === 'idle' && pointCount.value <= 1,
+	() => !hasPlaceholderBeenDismissed.value && status.value === 'idle' && pointCount.value === 0,
 )
 
 // Trim controls for export
-const trimStart = ref(0)
-const trimEnd = ref(0)
-const trimOverrides = ref<TrimOverrides | null>(null)
-const isLoadingSharedLink = ref(false)
-const sharedLinkTrimApplied = ref(false)
+const trimStart = ref(initialState.trimStart)
+const trimEnd = ref(initialState.trimEnd)
+const trimOverrides = ref<TrimOverrides | null>(initialState.trimOverrides)
 
 // Reset trim to full range when pointCount changes (new simulation)
-// But skip reset if loading from a shared link
+// Only in manual mode - auto-run mode preserves trim settings
 watch(pointCount, newCount => {
-	// Don't reset if we're loading a shared link or if shared link trim was applied
-	if (!isLoadingSharedLink.value && !sharedLinkTrimApplied.value) {
+	if (isManualMode.value) {
 		trimStart.value = 0
 		trimEnd.value = newCount
 		trimOverrides.value = null
 	}
 
-	if (newCount > 1) {
+	if (newCount >= 1) {
 		hasPlaceholderBeenDismissed.value = true
 	}
 })
@@ -246,20 +256,20 @@ const currentGroundPosition = computed<Point2D>(() => {
 })
 
 const handleReset = () => {
-	sharedLinkTrimApplied.value = false
+	setManualMode()
 	reset()
 }
 
 const handleGenerate = (steps: number) => {
-	sharedLinkTrimApplied.value = false
+	setManualMode()
 	instantSteps.value = steps
 	reset()
 	runInstant(steps)
 }
 
 const handleStart = () => {
-	sharedLinkTrimApplied.value = false
-	startRealtime()
+	setManualMode()
+	start()
 }
 
 const handlePause = () => {
@@ -319,61 +329,32 @@ const handleCloseShareModal = () => {
 	showShareModal.value = false
 }
 
-// Load shared link on mount if present
+// Initialize simulation mode from shared link
+setMode(initialState.mode)
+
+// Handle auto-play from shared link
 onMounted(() => {
-	const shareParam = getShareQueryParam()
-	if (shareParam) {
-		const sharedState = decodeShareLink(shareParam)
-		if (sharedState) {
-			// Apply configuration
-			updateInitialConfig(sharedState.config)
-			setMode(sharedState.mode)
-
-			// Mark that we're loading from a shared link to preserve trim settings
-			isLoadingSharedLink.value = true
-			sharedLinkTrimApplied.value = true
-
-			// Apply trim settings
-			trimStart.value = sharedState.trimStart
-			trimEnd.value = sharedState.trimEnd
-			trimOverrides.value = sharedState.trimOverrides
-
-			// If autoPlay is enabled, trigger simulation
-			if (sharedState.autoPlay) {
-				if (sharedState.mode === 'instant' && sharedState.steps) {
-					instantSteps.value = sharedState.steps
-					// Longer delay to ensure theme and DOM are fully ready
-					setTimeout(() => {
-						reset()
-						runInstant(sharedState.steps!)
-						// Reset the loading flag after simulation completes
-						isLoadingSharedLink.value = false
-					}, 200)
-				} else if (sharedState.mode === 'realtime') {
-					// Longer delay to ensure theme and DOM are fully ready
-					setTimeout(() => {
-						// Reset first to clear canvas and simulation state
-						reset()
-						// Then start with trim bounds
-						startRealtimeWithTrim(sharedState.trimStart, sharedState.trimEnd)
-						// Keep flag true during realtime animation, watch will reset it when completed
-					}, 200)
-				}
-			} else {
-				// No autoplay, just reset flag
-				isLoadingSharedLink.value = false
-			}
+	if (initialState.autoPlay) {
+		reset()
+		if (initialState.mode === 'instant') {
+			runInstant(initialState.steps, {
+				startStep: initialState.trimStart,
+				endStep: initialState.trimEnd,
+			})
+		} else if (initialState.mode === 'realtime') {
+			start({
+				startStep: initialState.trimStart,
+				endStep: initialState.trimEnd,
+			})
 		}
 	}
 })
 
-// Watch for realtime simulation completion to reset the shared link flag
-// Wait longer to ensure all pointCount watches have settled
-watch(status, newStatus => {
-	if (newStatus === 'completed' && isLoadingSharedLink.value) {
-		setTimeout(() => {
-			isLoadingSharedLink.value = false
-		}, 200)
+// Watch for mode transitions from auto-run to manual
+// When transitioning to manual, clear target stop index
+watch(isManualMode, newIsManual => {
+	if (newIsManual) {
+		setTargetStopIndex(null)
 	}
 })
 </script>

@@ -1,5 +1,18 @@
 <template>
 	<div class="space-y-3">
+		<!-- Auto-run Mode Indicator -->
+		<div
+			v-if="appMode === 'auto-run'"
+			class="px-3 py-2 bg-accent-primary-100 dark:bg-accent-primary-900/20 border border-accent-primary-300 dark:border-accent-primary-700/30 rounded-lg"
+		>
+			<div class="flex items-center gap-2">
+				<div class="w-2 h-2 rounded-full bg-accent-primary-500 animate-pulse"></div>
+				<span class="text-xs font-display tracking-wider uppercase text-accent-primary-700 dark:text-accent-primary-300"
+					>Auto-Run Mode</span
+				>
+			</div>
+		</div>
+
 		<!-- Mode Tabs -->
 		<div class="bg-base-200 dark:bg-base-700 rounded-lg p-1 flex gap-1">
 			<button
@@ -107,11 +120,13 @@
 import { ref } from 'vue'
 import AppButton from '@/components/common/AppButton.vue'
 import type { SimulationMode, SimulationStatus } from '@/composables/useSimulation'
+import type { AppMode } from '@/types'
 
 defineProps<{
 	mode: SimulationMode
 	status: SimulationStatus
 	hasContent: boolean
+	appMode: AppMode
 }>()
 
 const emit = defineEmits<{

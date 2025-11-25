@@ -44,3 +44,5 @@ export interface BoundsConfig {
 }
 
 export type CanvasShape = 'square-center' | 'a4-portrait' | 'a4-landscape' | '16x9-portrait' | '16x9-landscape'
+
+export type AppMode = 'manual' | 'auto-run'

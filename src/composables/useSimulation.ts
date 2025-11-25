@@ -6,6 +6,11 @@ import { calculateBounds, groundToCanvas } from '@/utils/coordinates'
 export type SimulationMode = 'instant' | 'realtime'
 export type SimulationStatus = 'idle' | 'running' | 'paused' | 'completed'
 
+export interface StartOptions {
+	startStep?: number
+	endStep?: number
+}
+
 export function useSimulation(initialConfig: SimulationConfig) {
 	const simulator = new PendulumSimulator(initialConfig)
 
@@ -45,12 +50,27 @@ export function useSimulation(initialConfig: SimulationConfig) {
 
 	/**
 	 * Run simulation instantly for N steps
+	 * Supports optional startStep/endStep for consistency with realtime mode
 	 */
-	const runInstant = (steps: number) => {
+	const runInstant = (steps: number, options?: StartOptions) => {
+		const startStep = options?.startStep ?? 0
+		const endStep = options?.endStep ?? steps
+
 		status.value = 'running'
-		for (let i = 0; i < steps; i++) {
+
+		// Pre-run silently up to startStep
+		if (startStep > 0) {
+			for (let i = 0; i < startStep; i++) {
+				simulator.step()
+			}
+		}
+
+		// Run visible steps from startStep to endStep
+		const visibleSteps = Math.min(endStep, steps) - startStep
+		for (let i = 0; i < visibleSteps; i++) {
 			simulator.step()
 		}
+
 		state.value = simulator.getState()
 		velocity.value = simulator.getVelocity()
 		paintPoints.value = [...simulator.getPaintPoints()]
@@ -82,18 +102,33 @@ export function useSimulation(initialConfig: SimulationConfig) {
 
 	/**
 	 * Start real-time simulation
+	 * Supports optional startStep/endStep for trimmed playback
 	 */
-	const startRealtime = () => {
+	const start = (options?: StartOptions) => {
 		if (status.value === 'running') return
+
+		const startStep = options?.startStep ?? 0
+		const endStep = options?.endStep
 
 		// If starting from completed or idle state, apply config and reset first
 		if (status.value === 'completed' || status.value === 'idle') {
 			simulator.updateConfig(initialConfig_ref.value)
 			simulator.reset()
+
+			// Pre-run up to startStep silently
+			if (startStep > 0) {
+				for (let i = 0; i < startStep; i++) {
+					simulator.step()
+				}
+			}
+
 			state.value = simulator.getState()
 			velocity.value = simulator.getVelocity()
 			paintPoints.value = [...simulator.getPaintPoints()]
 		}
+
+		// Set target stop index if endStep provided
+		targetStopIndex = endStep ?? null
 
 		status.value = 'running'
 		lastFrameTime = performance.now()
@@ -118,7 +153,9 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	 */
 	const resume = () => {
 		if (status.value !== 'paused') return
-		startRealtime()
+		status.value = 'running'
+		lastFrameTime = performance.now()
+		animationFrameId = requestAnimationFrame(animationLoop)
 	}
 
 	/**
@@ -194,35 +231,10 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	}
 
 	/**
-	 * Start real-time simulation with trim bounds (for auto-play from shared links)
-	 * Pre-runs simulation up to trimStart, then animates from trimStart to trimEnd
+	 * Set target stop index for auto-stopping simulation
 	 */
-	const startRealtimeWithTrim = (trimStart: number, trimEnd: number) => {
-		if (status.value === 'running') return
-
-		// Reset and apply config
-		simulator.updateConfig(initialConfig_ref.value)
-		simulator.reset()
-
-		// Pre-run up to trimStart silently
-		if (trimStart > 0) {
-			for (let i = 0; i < trimStart; i++) {
-				simulator.step()
-			}
-		}
-
-		// Update state after pre-run
-		state.value = simulator.getState()
-		velocity.value = simulator.getVelocity()
-		paintPoints.value = [...simulator.getPaintPoints()]
-
-		// Set target stop index
-		targetStopIndex = trimEnd
-
-		// Start animation from this point
-		status.value = 'running'
-		lastFrameTime = performance.now()
-		animationFrameId = requestAnimationFrame(animationLoop)
+	const setTargetStopIndex = (index: number | null) => {
+		targetStopIndex = index
 	}
 
 	return {
@@ -236,8 +248,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		initialConfig: initialConfig_ref,
 		step,
 		runInstant,
-		startRealtime,
-		startRealtimeWithTrim,
+		start,
 		pause,
 		resume,
 		stop,
@@ -246,5 +257,6 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		updateInitialConfig,
 		updateRuntimeConfig,
 		setMode,
+		setTargetStopIndex,
 	}
 }

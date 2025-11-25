@@ -83,26 +83,37 @@ const draw = () => {
 		lastDrawnCount = 0
 	}
 
-	// Need at least 2 points to draw
-	if (points.length < 2) {
-		// Update lastDrawnCount even when we can't draw yet
-		lastDrawnCount = points.length
+	// No points yet - nothing to draw
+	if (points.length === 0) {
+		lastDrawnCount = 0
 		return
 	}
 
 	// Always configure styles to ensure correct theme colors
 	configureContext(ctx)
 
-	// Draw only new segments
-	const startIdx = Math.max(1, lastDrawnCount)
-	for (let i = startIdx; i < points.length; i++) {
-		const prevPoint = simulationToViewport(points[i - 1], canvasWidth.value, canvasHeight.value, props.bounds)
-		const currPoint = simulationToViewport(points[i], canvasWidth.value, canvasHeight.value, props.bounds)
-
+	// Single point - draw a dot
+	if (points.length === 1 && lastDrawnCount === 0) {
+		const point = simulationToViewport(points[0], canvasWidth.value, canvasHeight.value, props.bounds)
 		ctx.beginPath()
-		ctx.moveTo(prevPoint.x, prevPoint.y)
-		ctx.lineTo(currPoint.x, currPoint.y)
-		ctx.stroke()
+		ctx.arc(point.x, point.y, (2 * dpr) / 2, 0, Math.PI * 2)
+		ctx.fill()
+		lastDrawnCount = 1
+		return
+	}
+
+	// Draw only new segments (need at least 2 points for lines)
+	if (points.length >= 2) {
+		const startIdx = Math.max(1, lastDrawnCount)
+		for (let i = startIdx; i < points.length; i++) {
+			const prevPoint = simulationToViewport(points[i - 1], canvasWidth.value, canvasHeight.value, props.bounds)
+			const currPoint = simulationToViewport(points[i], canvasWidth.value, canvasHeight.value, props.bounds)
+
+			ctx.beginPath()
+			ctx.moveTo(prevPoint.x, prevPoint.y)
+			ctx.lineTo(currPoint.x, currPoint.y)
+			ctx.stroke()
+		}
 	}
 
 	lastDrawnCount = points.length

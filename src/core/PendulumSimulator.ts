@@ -28,8 +28,8 @@ export class PendulumSimulator {
 			config.ropeLength,
 		)
 
-		// Add initial paint point
-		this.addPaintPoint()
+		// Start with empty paint points array
+		// First step() call will add the first point
 	}
 
 	/**
@@ -57,7 +57,6 @@ export class PendulumSimulator {
 			this.config.ropeLength,
 		)
 		this.paintPoints = []
-		this.addPaintPoint()
 	}
 
 	/**
