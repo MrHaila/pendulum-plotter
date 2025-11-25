@@ -34,8 +34,8 @@
 				</div>
 				<div class="h-1.5 bg-base-200 dark:bg-base-700 rounded-full overflow-hidden">
 					<div
-						class="h-full bg-accent-primary-500 transition-all duration-100"
-						:style="{ width: `${thetaPercent}%` }"
+						class="h-full transition-all duration-100"
+						:style="{ width: `${thetaPercent}%`, backgroundColor: thetaColor }"
 					/>
 				</div>
 			</div>
@@ -49,7 +49,10 @@
 					<span>{{ state.phi.toFixed(3) }} rad</span>
 				</div>
 				<div class="h-1.5 bg-base-200 dark:bg-base-700 rounded-full overflow-hidden">
-					<div class="h-full bg-accent-primary-500 transition-all duration-100" :style="{ width: `${phiPercent}%` }" />
+					<div
+						class="h-full transition-all duration-100"
+						:style="{ width: `${phiPercent}%`, backgroundColor: phiColor }"
+					/>
 				</div>
 			</div>
 
@@ -63,8 +66,8 @@
 				</div>
 				<div class="h-1.5 bg-base-200 dark:bg-base-700 rounded-full overflow-hidden">
 					<div
-						class="h-full bg-accent-secondary-500 dark:bg-accent-secondary-300 transition-all duration-100"
-						:style="{ width: `${thetaDotPercent}%` }"
+						class="h-full transition-all duration-100"
+						:style="{ width: `${thetaDotPercent}%`, backgroundColor: thetaDotColor }"
 					/>
 				</div>
 			</div>
@@ -79,8 +82,8 @@
 				</div>
 				<div class="h-1.5 bg-base-200 dark:bg-base-700 rounded-full overflow-hidden">
 					<div
-						class="h-full bg-accent-secondary-500 dark:bg-accent-secondary-300 transition-all duration-100"
-						:style="{ width: `${phiDotPercent}%` }"
+						class="h-full transition-all duration-100"
+						:style="{ width: `${phiDotPercent}%`, backgroundColor: phiDotColor }"
 					/>
 				</div>
 			</div>
@@ -104,4 +107,21 @@ const thetaPercent = computed(() => ((props.state.theta + Math.PI) / (2 * Math.P
 const phiPercent = computed(() => (props.state.phi / Math.PI) * 100)
 const thetaDotPercent = computed(() => Math.min((Math.abs(props.state.thetaDot) / 10) * 100, 100))
 const phiDotPercent = computed(() => Math.min((Math.abs(props.state.phiDot) / 10) * 100, 100))
+
+// Dynamic color interpolation from muted to primary based on percentage
+const getDynamicColor = (percent: number) => {
+	const clampedPercent = Math.max(0, Math.min(100, percent))
+	const ratio = clampedPercent / 100
+
+	// Interpolate from accent-primary-700 (#d67d14) to accent-primary-300 (#ffb85c)
+	const r = Math.round(214 + (255 - 214) * ratio) // 214 -> 255
+	const g = Math.round(125 + (184 - 125) * ratio) // 125 -> 184
+	const b = Math.round(20 + (92 - 20) * ratio) // 20 -> 92
+	return `rgb(${r}, ${g}, ${b})`
+}
+
+const thetaColor = computed(() => getDynamicColor(thetaPercent.value))
+const phiColor = computed(() => getDynamicColor(phiPercent.value))
+const thetaDotColor = computed(() => getDynamicColor(thetaDotPercent.value))
+const phiDotColor = computed(() => getDynamicColor(phiDotPercent.value))
 </script>
