@@ -2,7 +2,7 @@
 	<div class="space-y-3">
 		<AppButton
 			class="w-full px-4 py-2"
-			variant="secondary"
+			variant="primary"
 			:disabled="disabled || pointCount < 2"
 			@click="$emit('auto-trim')"
 		>
