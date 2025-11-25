@@ -165,8 +165,9 @@ const initialState = useAppInitialization(defaultConfig)
 // App mode management (manual vs auto-run)
 const { mode: appMode, isManualMode, setManualMode, setAutoRunMode } = useAppMode()
 
-// Set auto-run mode if loading from shared link
-if (initialState.isFromSharedLink && initialState.autoPlay) {
+// Set auto-run mode if loading from shared link (preserves URL-provided trim settings)
+// This applies regardless of autoPlay - autoPlay only controls automatic start, not trim preservation
+if (initialState.isFromSharedLink) {
 	setAutoRunMode()
 }
 
@@ -232,10 +233,14 @@ const trimmedCanvasPoints = computed(() => {
 		return segment
 	}
 	const result = [...segment]
+	// Apply start override immediately (first point is stable)
 	if (trimOverrides.value.start) {
 		result[0] = trimOverrides.value.start
 	}
-	if (trimOverrides.value.end && result.length > 1) {
+	// Only apply end override when we have the complete segment
+	// This prevents the override from shifting indices during progressive animation
+	const expectedLength = trimEnd.value - trimStart.value
+	if (trimOverrides.value.end && result.length > 1 && result.length >= expectedLength) {
 		result[result.length - 1] = trimOverrides.value.end
 	}
 	return result

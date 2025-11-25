@@ -56,6 +56,8 @@ const displayHeight = baseHeight
 
 // Track last drawn point count for incremental rendering
 let lastDrawnCount = 0
+// Track first point to detect array content changes (not just length)
+let lastFirstPointKey: string | null = null
 
 // Configure canvas context styles once
 const configureContext = (ctx: CanvasRenderingContext2D) => {
@@ -77,16 +79,30 @@ const draw = () => {
 
 	const points = props.points
 
-	// Full redraw on reset (points array shrunk or jumped significantly)
-	if (points.length < lastDrawnCount) {
+	// Compute first point key to detect content changes
+	const firstPointKey = points.length > 0 ? `${points[0].x.toFixed(4)},${points[0].y.toFixed(4)}` : null
+
+	// Full redraw on reset (points array shrunk or content fundamentally changed)
+	const needsFullRedraw =
+		points.length < lastDrawnCount ||
+		(lastFirstPointKey !== null && firstPointKey !== null && firstPointKey !== lastFirstPointKey)
+
+	if (needsFullRedraw) {
 		ctx.clearRect(0, 0, canvasWidth.value, canvasHeight.value)
 		lastDrawnCount = 0
+		lastFirstPointKey = null
 	}
 
 	// No points yet - nothing to draw
 	if (points.length === 0) {
 		lastDrawnCount = 0
+		lastFirstPointKey = null
 		return
+	}
+
+	// Track first point for change detection
+	if (lastFirstPointKey === null && firstPointKey !== null) {
+		lastFirstPointKey = firstPointKey
 	}
 
 	// Always configure styles to ensure correct theme colors
@@ -127,6 +143,7 @@ watch(
 	() => props.bounds,
 	() => {
 		lastDrawnCount = 0
+		lastFirstPointKey = null
 		draw()
 	},
 	{ deep: true },
@@ -136,6 +153,7 @@ watch(
 const themeObserver = new MutationObserver(() => {
 	// Force full redraw when theme changes
 	lastDrawnCount = 0
+	lastFirstPointKey = null
 	draw()
 })
 

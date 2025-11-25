@@ -61,7 +61,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
 import AppButton from '@/components/common/AppButton.vue'
 
 const props = defineProps<{
@@ -77,17 +76,8 @@ const emit = defineEmits<{
 	'update:trimEnd': [value: number]
 }>()
 
-// Watch for disabled -> enabled transition, reset to full range
-watch(
-	() => props.disabled,
-	(newDisabled, oldDisabled) => {
-		if (oldDisabled && !newDisabled) {
-			// Just became enabled, reset to full range
-			emit('update:trimStart', 0)
-			emit('update:trimEnd', props.pointCount)
-		}
-	},
-)
+// Note: Trim reset on simulation completion is handled in App.vue's pointCount watcher
+// This allows auto-run mode (from shared links) to preserve URL-provided trim settings
 
 const updateStart = (e: Event) => {
 	const value = parseInt((e.target as HTMLInputElement).value, 10)
