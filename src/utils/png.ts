@@ -1,15 +1,24 @@
 import type { Point2D, BoundsConfig } from '@/types'
 import { simulationToViewport } from './coordinates'
 
+export interface PNGExportOptions {
+	filename?: string
+	scale?: number
+	transparent?: boolean
+	lineWidth?: number
+}
+
 /**
  * Render points to canvas and export as PNG
+ *
+ * Default scale of 4 gives approximately 300 DPI for A4 canvas:
+ * - A4 Portrait: 595×842 → 2380×3368 pixels
+ * - A4 Landscape: 842×595 → 3368×2380 pixels
+ * - Square: 1024×1024 → 4096×4096 pixels
  */
-export function downloadPNG(
-	points: Point2D[],
-	bounds: BoundsConfig,
-	filename = 'pendulum-plotter.png',
-	scale = 2, // Export at 2x resolution for quality
-): void {
+export function downloadPNG(points: Point2D[], bounds: BoundsConfig, options: PNGExportOptions = {}): void {
+	const { filename = 'pendulum-plotter.png', scale = 4, transparent = true, lineWidth = 0.75 } = options
+
 	if (points.length < 2) {
 		console.warn('Not enough points to export PNG')
 		return
@@ -28,16 +37,19 @@ export function downloadPNG(
 		return
 	}
 
-	// Draw paper background (warm cream in light mode)
-	const gradient = ctx.createLinearGradient(0, 0, width, height)
-	gradient.addColorStop(0, '#fdfcfb')
-	gradient.addColorStop(1, '#f7f4ef')
-	ctx.fillStyle = gradient
-	ctx.fillRect(0, 0, width, height)
+	// Draw background (or leave transparent)
+	if (!transparent) {
+		const gradient = ctx.createLinearGradient(0, 0, width, height)
+		gradient.addColorStop(0, '#fdfcfb')
+		gradient.addColorStop(1, '#f7f4ef')
+		ctx.fillStyle = gradient
+		ctx.fillRect(0, 0, width, height)
+	}
 
 	// Configure stroke style
+	// Line width scales with resolution to maintain consistent visual weight
 	ctx.strokeStyle = '#2b2014' // base-900
-	ctx.lineWidth = 2 * scale
+	ctx.lineWidth = lineWidth * scale
 	ctx.lineCap = 'round'
 	ctx.lineJoin = 'round'
 
@@ -54,19 +66,23 @@ export function downloadPNG(
 	ctx.stroke()
 
 	// Convert to blob and download
-	canvas.toBlob(blob => {
-		if (!blob) {
-			console.error('Failed to create PNG blob')
-			return
-		}
+	canvas.toBlob(
+		blob => {
+			if (!blob) {
+				console.error('Failed to create PNG blob')
+				return
+			}
 
-		const url = URL.createObjectURL(blob)
-		const link = document.createElement('a')
-		link.href = url
-		link.download = filename
-		document.body.appendChild(link)
-		link.click()
-		document.body.removeChild(link)
-		URL.revokeObjectURL(url)
-	}, 'image/png')
+			const url = URL.createObjectURL(blob)
+			const link = document.createElement('a')
+			link.href = url
+			link.download = filename
+			document.body.appendChild(link)
+			link.click()
+			document.body.removeChild(link)
+			URL.revokeObjectURL(url)
+		},
+		'image/png',
+		1.0,
+	)
 }
