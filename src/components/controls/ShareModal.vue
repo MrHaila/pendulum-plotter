@@ -126,14 +126,13 @@
 											ref="linkInputRef"
 											:value="shareUrl"
 											readonly
-											class="flex-1 px-3 py-2 text-xs font-mono bg-base-200 dark:bg-base-700 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md text-base-800 dark:text-base-100 focus:outline-none focus:ring-2 focus:ring-accent-primary-400 select-all"
+											class="flex-1 px-3 py-2 text-xs font-mono bg-base-200 dark:bg-base-700 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md text-base-800 dark:text-base-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent-primary-400 select-all"
 											@click="handleSelectAll"
 										/>
 										<AppButton variant="primary" class="px-4 py-2" @click="handleCopy">
 											{{ copyButtonText }}
 										</AppButton>
 									</div>
-									<p class="text-xs text-base-500 dark:text-base-400">Click to select all, or use the copy button</p>
 								</div>
 							</div>
 						</div>
