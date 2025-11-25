@@ -66,7 +66,7 @@
 					<div class="flex items-center justify-between">
 						<DarkModeToggle />
 						<a
-							href="https://github.com/placeholder/plotter"
+							href="https://github.com/MrHaila/pendulum-plotter"
 							target="_blank"
 							rel="noopener noreferrer"
 							class="text-base-500 hover:text-base-700 dark:text-base-600 dark:hover:text-base-400 transition-colors"
