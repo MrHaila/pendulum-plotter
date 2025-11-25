@@ -4,7 +4,10 @@
 			<!-- Zoom -->
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
-					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+					<label
+						for="experiment-scale"
+						class="text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400"
+					>
 						Experiment Scale
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
@@ -12,6 +15,7 @@
 					>
 				</div>
 				<input
+					id="experiment-scale"
 					v-model.number="localConfig.zoom"
 					type="range"
 					min="0.5"
@@ -29,7 +33,10 @@
 			<!-- Measurement Area -->
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
-					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+					<label
+						for="measurement-area"
+						class="text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400"
+					>
 						Measurement Area
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100">{{
@@ -37,6 +44,7 @@
 					}}</span>
 				</div>
 				<input
+					id="measurement-area"
 					:value="localShapeIndex"
 					type="range"
 					min="0"
@@ -54,7 +62,10 @@
 			<!-- Damping -->
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
-					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+					<label
+						for="damping"
+						class="text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400"
+					>
 						Dissipative Friction Factor
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100">{{
@@ -62,6 +73,7 @@
 					}}</span>
 				</div>
 				<input
+					id="damping"
 					v-model.number="localConfig.damping"
 					type="range"
 					min="0"
@@ -77,7 +89,10 @@
 			<!-- Initial Theta -->
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
-					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+					<label
+						for="initial-theta"
+						class="text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400"
+					>
 						Rotation θ
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
@@ -85,6 +100,7 @@
 					>
 				</div>
 				<input
+					id="initial-theta"
 					v-model.number="localConfig.initialTheta"
 					type="range"
 					min="-3.14"
@@ -102,7 +118,10 @@
 			<!-- Initial Phi -->
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
-					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+					<label
+						for="initial-phi"
+						class="text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400"
+					>
 						Starting Height φ
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
@@ -110,6 +129,7 @@
 					>
 				</div>
 				<input
+					id="initial-phi"
 					v-model.number="localConfig.initialPhi"
 					type="range"
 					min="0"
@@ -127,7 +147,10 @@
 			<!-- Initial Theta Dot -->
 			<div>
 				<div class="flex justify-between items-baseline mb-1">
-					<label class="text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400">
+					<label
+						for="initial-theta-dot"
+						class="text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400"
+					>
 						Starting Spin θ̇
 					</label>
 					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
@@ -135,6 +158,7 @@
 					>
 				</div>
 				<input
+					id="initial-theta-dot"
 					v-model.number="localConfig.initialThetaDot"
 					type="range"
 					min="-2.5"

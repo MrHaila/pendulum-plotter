@@ -15,10 +15,12 @@
 				<!-- Start Trim -->
 				<div>
 					<label
-						class="block text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400 mb-1"
+						for="trim-start"
+						class="block text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400 mb-1"
 						>Start Point</label
 					>
 					<input
+						id="trim-start"
 						:value="props.trimStart"
 						type="number"
 						:min="0"
@@ -32,10 +34,12 @@
 				<!-- End Trim -->
 				<div>
 					<label
-						class="block text-xs font-display font-light tracking-wider uppercase text-base-500 dark:text-base-400 mb-1"
+						for="trim-end"
+						class="block text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400 mb-1"
 						>End Point</label
 					>
 					<input
+						id="trim-end"
 						:value="props.trimEnd"
 						type="number"
 						:min="0"
