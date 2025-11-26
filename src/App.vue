@@ -86,7 +86,13 @@
 		<!-- Main Canvas Area -->
 		<main class="flex-1 flex items-center justify-center p-8 bg-base-50 dark:bg-base-900 relative overflow-hidden">
 			<RawDataDisplay :points="trimmedCanvasPoints" />
-			<PaintCanvas :points="trimmedCanvasPoints" :bounds="bounds" :show-placeholder="showCanvasPlaceholder" />
+			<PaintCanvas
+				:points="trimmedCanvasPoints"
+				:bounds="bounds"
+				:show-placeholder="showCanvasPlaceholder"
+				:canvas-offset="canvasOffset"
+				:is-animating="status === 'running' && mode === 'realtime'"
+			/>
 		</main>
 
 		<!-- Right Diagnostics -->
@@ -174,6 +180,7 @@ const defaultConfig: SimulationConfig = {
 	initialPhi: Math.PI / 4,
 	initialThetaDot: 0.3,
 	initialPhiDot: 0,
+	canvasSwingStart: 0,
 }
 
 // Initialize app state from query params or defaults
@@ -191,6 +198,7 @@ if (initialState.isFromSharedLink) {
 const {
 	canvasPoints,
 	paintPoints,
+	canvasOffset,
 	state,
 	velocity,
 	mode,

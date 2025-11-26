@@ -193,6 +193,33 @@
 				/>
 				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">Initial spin speed around the center.</p>
 			</div> -->
+
+			<!-- Canvas Swing Start -->
+			<div>
+				<div class="flex justify-between items-baseline mb-1">
+					<label
+						for="canvas-swing-start"
+						class="text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400"
+					>
+						Canvas Swing Start
+					</label>
+					<span class="text-sm font-mono font-light text-base-800 dark:text-base-100"
+						>{{ localConfig.canvasSwingStart.toFixed(2) }} rad</span
+					>
+				</div>
+				<input
+					id="canvas-swing-start"
+					v-model.number="localConfig.canvasSwingStart"
+					type="range"
+					min="-0.5"
+					max="0.5"
+					step="0.01"
+					:disabled="disabled"
+					class="w-full h-1.5 bg-base-200 dark:bg-base-700 rounded-full appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-md [&::-webkit-slider-thumb]:bg-gradient-to-b [&::-webkit-slider-thumb]:from-accent-primary-500 [&::-webkit-slider-thumb]:to-accent-primary-700 [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/20 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-md [&::-moz-range-thumb]:bg-gradient-to-b [&::-moz-range-thumb]:from-accent-primary-500 [&::-moz-range-thumb]:to-accent-primary-700 [&::-moz-range-thumb]:shadow-[0_1px_3px_rgba(69,40,20,0.08)] [&::-moz-range-thumb]:border-0"
+					@input="emitUpdate"
+				/>
+				<p class="text-[10px] text-base-500 dark:text-base-400 mt-1">Simulates canvas on a swing. 0 = static.</p>
+			</div>
 		</div>
 	</div>
 </template>
@@ -221,6 +248,7 @@ const localConfig = reactive({
 	initialPhi: props.config.initialPhi,
 	initialThetaDot: props.config.initialThetaDot,
 	initialPhiDot: props.config.initialPhiDot,
+	canvasSwingStart: props.config.canvasSwingStart,
 })
 
 // Sync with props when they change externally
@@ -236,6 +264,7 @@ watch(
 		localConfig.initialPhi = newConfig.initialPhi
 		localConfig.initialThetaDot = newConfig.initialThetaDot
 		localConfig.initialPhiDot = newConfig.initialPhiDot
+		localConfig.canvasSwingStart = newConfig.canvasSwingStart
 	},
 	{ deep: true },
 )

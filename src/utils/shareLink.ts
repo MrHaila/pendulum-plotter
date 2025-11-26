@@ -91,6 +91,7 @@ function sanitizeShareableState(state: ShareableState): ShareableState {
 			initialPhi: clamp(config.initialPhi ?? Math.PI / 4, 0, Math.PI / 2),
 			initialThetaDot: clamp(config.initialThetaDot ?? 0.3, -10, 10),
 			initialPhiDot: clamp(config.initialPhiDot ?? 0, -10, 10),
+			canvasSwingStart: clamp(config.canvasSwingStart ?? 0, -0.5, 0.5),
 		},
 		mode: state.mode,
 		steps: state.steps !== undefined ? clamp(Math.floor(state.steps), 100, 20000) : undefined,

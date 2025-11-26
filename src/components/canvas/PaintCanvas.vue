@@ -1,5 +1,5 @@
 <template>
-	<div class="relative">
+	<div class="relative" :style="canvasContainerStyle">
 		<canvas
 			ref="canvasRef"
 			:width="canvasWidth"
@@ -33,6 +33,8 @@ const props = defineProps<{
 	points: Point2D[]
 	bounds: BoundsConfig
 	showPlaceholder?: boolean
+	canvasOffset?: number
+	isAnimating?: boolean
 }>()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -53,6 +55,23 @@ const canvasWidth = computed(() => baseWidth.value * dpr)
 const canvasHeight = computed(() => baseHeight.value * dpr)
 const displayWidth = baseWidth
 const displayHeight = baseHeight
+
+// Calculate visual offset for canvas swing animation
+// Convert simulation offset (meters) to screen pixels
+const canvasContainerStyle = computed(() => {
+	if (!props.isAnimating || !props.canvasOffset) {
+		return {}
+	}
+	// canvasOffset is in meters (physical displacement)
+	// 1. Convert meters to canvas points: meters * bounds.scale
+	// 2. Convert canvas points to screen pixels: canvasPoints * (displayHeight / bounds.canvasHeight)
+	// 3. Invert: when canvas is higher (positive offset), paint lands lower, so visual moves opposite
+	const metersToPixels = props.bounds.scale * (displayHeight.value / props.bounds.canvasHeight)
+	const offsetPx = -props.canvasOffset * metersToPixels
+	return {
+		transform: `translateY(${offsetPx}px)`,
+	}
+})
 
 // Track last drawn point count for incremental rendering
 let lastDrawnCount = 0

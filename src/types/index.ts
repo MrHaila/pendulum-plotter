@@ -33,6 +33,12 @@ export interface SimulationConfig {
 	initialPhi: number // radians
 	initialThetaDot: number // rad/s
 	initialPhiDot: number // rad/s
+	canvasSwingStart: number // initial canvas swing angle (radians, -0.5 to +0.5)
+}
+
+export interface CanvasOscillatorState {
+	angle: number // current swing angle (radians)
+	angularVelocity: number // angular velocity (rad/s)
 }
 
 export interface BoundsConfig {

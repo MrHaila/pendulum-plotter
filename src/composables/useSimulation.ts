@@ -16,6 +16,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 
 	const state = ref<PendulumState>(simulator.getState())
 	const velocity = ref<Vec3>(simulator.getVelocity())
+	const canvasOffset = ref<number>(simulator.getCanvasDisplacement())
 	const paintPoints = ref<Point2D[]>(simulator.getPaintPoints())
 	const bounds = ref<BoundsConfig>(
 		calculateBounds(initialConfig.ropeLength, initialConfig.zoom, initialConfig.canvasShape),
@@ -45,6 +46,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		simulator.step()
 		state.value = simulator.getState()
 		velocity.value = simulator.getVelocity()
+		canvasOffset.value = simulator.getCanvasDisplacement()
 		paintPoints.value = [...simulator.getPaintPoints()]
 	}
 
@@ -73,6 +75,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 
 		state.value = simulator.getState()
 		velocity.value = simulator.getVelocity()
+		canvasOffset.value = simulator.getCanvasDisplacement()
 		paintPoints.value = [...simulator.getPaintPoints()]
 		status.value = 'completed'
 	}
@@ -124,6 +127,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 
 			state.value = simulator.getState()
 			velocity.value = simulator.getVelocity()
+			canvasOffset.value = simulator.getCanvasDisplacement()
 			paintPoints.value = [...simulator.getPaintPoints()]
 		}
 
@@ -188,6 +192,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		simulator.reset()
 		state.value = simulator.getState()
 		velocity.value = simulator.getVelocity()
+		canvasOffset.value = simulator.getCanvasDisplacement()
 		paintPoints.value = [...simulator.getPaintPoints()]
 		status.value = 'idle'
 	}
@@ -221,6 +226,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 		// Force state update to reflect new config
 		state.value = simulator.getState()
 		velocity.value = simulator.getVelocity()
+		canvasOffset.value = simulator.getCanvasDisplacement()
 	}
 
 	/**
@@ -240,6 +246,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	return {
 		state,
 		velocity,
+		canvasOffset,
 		paintPoints,
 		canvasPoints,
 		bounds,
