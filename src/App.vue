@@ -51,6 +51,16 @@
 						/>
 					</section>
 
+					<!-- Stroke Style Section -->
+					<section class="space-y-3">
+						<SidebarSectionHeader label="Stroke Style" />
+						<StrokeStyleControls
+							:config="strokeStyle"
+							:disabled="status === 'running' || status === 'idle'"
+							@update:config="config => (strokeStyle = config)"
+						/>
+					</section>
+
 					<!-- Export Section -->
 					<section class="space-y-3">
 						<SidebarSectionHeader label="Share Findings" />
@@ -89,6 +99,7 @@
 			<PaintCanvas
 				:points="trimmedCanvasPoints"
 				:bounds="bounds"
+				:stroke-style="strokeStyle"
 				:show-placeholder="showCanvasPlaceholder"
 				:canvas-offset="canvasOffset"
 				:is-animating="status === 'running' && mode === 'realtime'"
@@ -159,6 +170,7 @@ import { downloadPNG } from '@/utils/png'
 import ControlPanel from '@/components/controls/ControlPanel.vue'
 import InitialParameterControls from '@/components/controls/InitialParameterControls.vue'
 import TrimControls from '@/components/controls/TrimControls.vue'
+import StrokeStyleControls from '@/components/controls/StrokeStyleControls.vue'
 import ExportPanel from '@/components/controls/ExportPanel.vue'
 import ShareModal from '@/components/controls/ShareModal.vue'
 import DarkModeToggle from '@/components/controls/DarkModeToggle.vue'
@@ -170,7 +182,7 @@ import PendulumOverlay from '@/components/debug/PendulumOverlay.vue'
 import RawDataDisplay from '@/components/debug/RawDataDisplay.vue'
 import RuntimeStats from '@/components/debug/RuntimeStats.vue'
 import NarrowScreenMessage from '@/components/NarrowScreenMessage.vue'
-import type { SimulationConfig, Point2D, Vec3 } from '@/types'
+import type { SimulationConfig, Point2D, Vec3, StrokeStyleConfig } from '@/types'
 
 // Responsive breakpoint detection
 const { windowWidth, isTooNarrow, minWidth } = useBreakpoint()
@@ -240,6 +252,19 @@ const trimStart = ref(initialState.trimStart)
 const trimEnd = ref(initialState.trimEnd)
 const trimOverrides = ref<TrimOverrides | null>(initialState.trimOverrides)
 
+// Stroke style configuration
+const strokeStyle = ref<StrokeStyleConfig>({
+	type: 'uniform',
+	baseWidth: 1.5,
+	minWidth: 0.5,
+	maxWidth: 3,
+	minOpacity: 0.2,
+	maxOpacity: 1,
+	slowColor: '#2b2014',
+	fastColor: '#a54f2a',
+	invertVelocity: false,
+})
+
 // Reset trim to full range when pointCount changes (new simulation)
 // Only in manual mode - auto-run mode preserves trim settings
 watch(pointCount, newCount => {
@@ -266,14 +291,15 @@ const trimmedCanvasPoints = computed(() => {
 	}
 	const result = [...segment]
 	// Apply start override immediately (first point is stable)
+	// Preserve speed from original point when applying position override
 	if (trimOverrides.value.start) {
-		result[0] = trimOverrides.value.start
+		result[0] = { ...trimOverrides.value.start, speed: segment[0].speed }
 	}
 	// Only apply end override when we have the complete segment
 	// This prevents the override from shifting indices during progressive animation
 	const expectedLength = trimEnd.value - trimStart.value
 	if (trimOverrides.value.end && result.length > 1 && result.length >= expectedLength) {
-		result[result.length - 1] = trimOverrides.value.end
+		result[result.length - 1] = { ...trimOverrides.value.end, speed: segment[segment.length - 1].speed }
 	}
 	return result
 })

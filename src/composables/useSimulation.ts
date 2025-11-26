@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import type { SimulationConfig, PendulumState, Point2D, BoundsConfig, Vec3 } from '@/types'
+import type { SimulationConfig, PendulumState, PaintPoint, CanvasPaintPoint, BoundsConfig, Vec3 } from '@/types'
 import { PendulumSimulator } from '@/core/PendulumSimulator'
 import { calculateBounds, groundToCanvas } from '@/utils/coordinates'
 
@@ -17,7 +17,7 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	const state = ref<PendulumState>(simulator.getState())
 	const velocity = ref<Vec3>(simulator.getVelocity())
 	const canvasOffset = ref<number>(simulator.getCanvasDisplacement())
-	const paintPoints = ref<Point2D[]>(simulator.getPaintPoints())
+	const paintPoints = ref<PaintPoint[]>(simulator.getPaintPoints())
 	const bounds = ref<BoundsConfig>(
 		calculateBounds(initialConfig.ropeLength, initialConfig.zoom, initialConfig.canvasShape),
 	)
@@ -33,10 +33,13 @@ export function useSimulation(initialConfig: SimulationConfig) {
 	let targetStopIndex: number | null = null // For auto-stopping at trim end
 
 	/**
-	 * Paint points in A4 coordinate space (595x842)
+	 * Paint points in canvas coordinate space with speed preserved
 	 */
-	const canvasPoints = computed<Point2D[]>(() => {
-		return paintPoints.value.map(p => groundToCanvas(p.x, p.y, bounds.value))
+	const canvasPoints = computed<CanvasPaintPoint[]>(() => {
+		return paintPoints.value.map(p => ({
+			...groundToCanvas(p.x, p.y, bounds.value),
+			speed: p.speed,
+		}))
 	})
 
 	/**

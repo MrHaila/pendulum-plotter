@@ -14,6 +14,30 @@ export interface Point2D {
 	y: number
 }
 
+export interface PaintPoint {
+	x: number
+	y: number
+	speed: number // velocity magnitude at this point (m/s)
+}
+
+export interface CanvasPaintPoint extends Point2D {
+	speed: number // velocity magnitude in canvas space
+}
+
+export type StrokeStyleType = 'uniform' | 'velocity-width' | 'velocity-opacity' | 'velocity-color'
+
+export interface StrokeStyleConfig {
+	type: StrokeStyleType
+	baseWidth: number // Base stroke width (pt)
+	minWidth: number // Min width for velocity-width (pt)
+	maxWidth: number // Max width for velocity-width (pt)
+	minOpacity: number // Min opacity for velocity-opacity (0-1)
+	maxOpacity: number // Max opacity for velocity-opacity (0-1)
+	slowColor: string // Color at low velocity
+	fastColor: string // Color at high velocity
+	invertVelocity: boolean // Invert the velocity mapping
+}
+
 export interface PendulumState {
 	theta: number // Azimuthal angle (radians)
 	phi: number // Polar angle from vertical (radians)

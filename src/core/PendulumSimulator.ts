@@ -1,4 +1,4 @@
-import type { PendulumState, SimulationConfig, Point2D, Vec3, CanvasOscillatorState } from '@/types'
+import type { PendulumState, SimulationConfig, PaintPoint, Vec3, CanvasOscillatorState } from '@/types'
 import {
 	integrateCartesian,
 	sphericalToCartesian,
@@ -12,7 +12,7 @@ export class PendulumSimulator {
 	private pos: Vec3
 	private vel: Vec3
 	private config: SimulationConfig
-	private paintPoints: Point2D[] = []
+	private paintPoints: PaintPoint[] = []
 	private time: number = 0
 	private canvasState: CanvasOscillatorState
 
@@ -93,9 +93,9 @@ export class PendulumSimulator {
 	}
 
 	/**
-	 * Get 2D paint points (X, Z coordinates projected to ground)
+	 * Get 2D paint points (X, Z coordinates projected to ground) with speed
 	 */
-	getPaintPoints(): Point2D[] {
+	getPaintPoints(): PaintPoint[] {
 		return this.paintPoints
 	}
 
@@ -105,6 +105,9 @@ export class PendulumSimulator {
 	 * Canvas oscillation affects the Y coordinate on the 2D canvas
 	 */
 	private addPaintPoint(): void {
+		// Compute velocity magnitude for stroke styling
+		const speed = Math.sqrt(this.vel.x ** 2 + this.vel.y ** 2 + this.vel.z ** 2)
+
 		// Paint drips to ground (Y = ropeLength), use X and Z for 2D position
 		// In our Cartesian system, y is vertical (down), x and z are horizontal
 		// Canvas swing angle is converted to physical displacement:
@@ -115,6 +118,7 @@ export class PendulumSimulator {
 		this.paintPoints.push({
 			x: this.pos.x,
 			y: this.pos.z + canvasDisplacement,
+			speed,
 		})
 	}
 

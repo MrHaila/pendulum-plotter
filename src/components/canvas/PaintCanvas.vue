@@ -26,12 +26,13 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue'
-import type { Point2D, BoundsConfig } from '@/types'
+import type { CanvasPaintPoint, BoundsConfig, StrokeStyleConfig } from '@/types'
 import { simulationToViewport } from '@/utils/coordinates'
 
 const props = defineProps<{
-	points: Point2D[]
+	points: CanvasPaintPoint[]
 	bounds: BoundsConfig
+	strokeStyle: StrokeStyleConfig
 	showPlaceholder?: boolean
 	canvasOffset?: number
 	isAnimating?: boolean
@@ -78,14 +79,77 @@ let lastDrawnCount = 0
 // Track first point to detect array content changes (not just length)
 let lastFirstPointKey: string | null = null
 
-// Configure canvas context styles once
+// Compute min/max speed from all points for normalization
+const computeSpeedRange = () => {
+	const points = props.points
+	if (points.length === 0) return { min: 0, max: 1 }
+	let min = Infinity
+	let max = -Infinity
+	for (const p of points) {
+		if (p.speed < min) min = p.speed
+		if (p.speed > max) max = p.speed
+	}
+	return { min, max: max === min ? min + 1 : max }
+}
+
+// Map speed to output value with optional inversion
+const mapSpeedToValue = (
+	speed: number,
+	minSpeed: number,
+	maxSpeed: number,
+	outMin: number,
+	outMax: number,
+	invert: boolean,
+) => {
+	if (maxSpeed === minSpeed) return (outMin + outMax) / 2
+	let t = (speed - minSpeed) / (maxSpeed - minSpeed) // 0 = slow, 1 = fast
+	if (invert) t = 1 - t
+	return outMin + t * (outMax - outMin)
+}
+
+// Interpolate between two hex colors
+const lerpColor = (color1: string, color2: string, t: number): string => {
+	const r1 = parseInt(color1.slice(1, 3), 16)
+	const g1 = parseInt(color1.slice(3, 5), 16)
+	const b1 = parseInt(color1.slice(5, 7), 16)
+	const r2 = parseInt(color2.slice(1, 3), 16)
+	const g2 = parseInt(color2.slice(3, 5), 16)
+	const b2 = parseInt(color2.slice(5, 7), 16)
+	const r = Math.round(r1 + (r2 - r1) * t)
+	const g = Math.round(g1 + (g2 - g1) * t)
+	const b = Math.round(b1 + (b2 - b1) * t)
+	return `rgb(${r}, ${g}, ${b})`
+}
+
+// Configure canvas context base styles
 const configureContext = (ctx: CanvasRenderingContext2D) => {
-	// Stroke color adapts to theme: charcoal in light mode, warm light in dark mode
-	const isDark = document.documentElement.classList.contains('dark')
-	ctx.strokeStyle = isDark ? '#b8a691' : '#2b2014' // base-400 in dark, base-900 in light
-	ctx.lineWidth = 2 * dpr
 	ctx.lineCap = 'round'
 	ctx.lineJoin = 'round'
+}
+
+// Get default stroke color based on theme
+const getDefaultStrokeColor = () => {
+	const isDark = document.documentElement.classList.contains('dark')
+	return isDark ? '#b8a691' : '#2b2014'
+}
+
+// Clear canvas and reset tracking state
+const clearCanvas = () => {
+	const canvas = canvasRef.value
+	if (!canvas) return
+
+	const ctx = canvas.getContext('2d')
+	if (!ctx) return
+
+	ctx.clearRect(0, 0, canvasWidth.value, canvasHeight.value)
+	lastDrawnCount = 0
+	lastFirstPointKey = null
+}
+
+// Force a complete redraw (clear + draw all points)
+const forceFullRedraw = () => {
+	clearCanvas()
+	draw()
 }
 
 // Draw paint trail incrementally (only new segments)
@@ -139,16 +203,64 @@ const draw = () => {
 
 	// Draw only new segments (need at least 2 points for lines)
 	if (points.length >= 2) {
+		const { min: minSpeed, max: maxSpeed } = computeSpeedRange()
+		const style = props.strokeStyle
+		const defaultColor = getDefaultStrokeColor()
 		const startIdx = Math.max(1, lastDrawnCount)
+
 		for (let i = startIdx; i < points.length; i++) {
 			const prevPoint = simulationToViewport(points[i - 1], canvasWidth.value, canvasHeight.value, props.bounds)
 			const currPoint = simulationToViewport(points[i], canvasWidth.value, canvasHeight.value, props.bounds)
+			const speed = points[i].speed
+
+			// Apply stroke style
+			switch (style.type) {
+				case 'uniform':
+					ctx.strokeStyle = defaultColor
+					ctx.lineWidth = style.baseWidth * dpr
+					ctx.globalAlpha = 1
+					break
+				case 'velocity-width': {
+					// Fast = thin (minWidth), Slow = thick (maxWidth) unless inverted
+					const width = mapSpeedToValue(speed, minSpeed, maxSpeed, style.maxWidth, style.minWidth, style.invertVelocity)
+					ctx.strokeStyle = defaultColor
+					ctx.lineWidth = width * dpr
+					ctx.globalAlpha = 1
+					break
+				}
+				case 'velocity-opacity': {
+					// Fast = transparent (minOpacity), Slow = opaque (maxOpacity) unless inverted
+					const opacity = mapSpeedToValue(
+						speed,
+						minSpeed,
+						maxSpeed,
+						style.maxOpacity,
+						style.minOpacity,
+						style.invertVelocity,
+					)
+					ctx.strokeStyle = defaultColor
+					ctx.lineWidth = style.baseWidth * dpr
+					ctx.globalAlpha = opacity
+					break
+				}
+				case 'velocity-color': {
+					// Interpolate between slowColor and fastColor
+					const t = (speed - minSpeed) / (maxSpeed - minSpeed)
+					ctx.strokeStyle = lerpColor(style.slowColor, style.fastColor, t)
+					ctx.lineWidth = style.baseWidth * dpr
+					ctx.globalAlpha = 1
+					break
+				}
+			}
 
 			ctx.beginPath()
 			ctx.moveTo(prevPoint.x, prevPoint.y)
 			ctx.lineTo(currPoint.x, currPoint.y)
 			ctx.stroke()
 		}
+
+		// Reset alpha after drawing
+		ctx.globalAlpha = 1
 	}
 
 	lastDrawnCount = points.length
@@ -157,24 +269,14 @@ const draw = () => {
 // Redraw when points change
 watch(() => props.points.length, draw)
 
+// Force full redraw when stroke style changes
+watch(() => props.strokeStyle, forceFullRedraw, { deep: true })
+
 // Reset canvas when bounds change (aspect ratio changes)
-watch(
-	() => props.bounds,
-	() => {
-		lastDrawnCount = 0
-		lastFirstPointKey = null
-		draw()
-	},
-	{ deep: true },
-)
+watch(() => props.bounds, forceFullRedraw, { deep: true })
 
 // Watch for theme changes and force redraw
-const themeObserver = new MutationObserver(() => {
-	// Force full redraw when theme changes
-	lastDrawnCount = 0
-	lastFirstPointKey = null
-	draw()
-})
+const themeObserver = new MutationObserver(forceFullRedraw)
 
 // Initial draw
 onMounted(() => {
