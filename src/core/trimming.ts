@@ -1,5 +1,4 @@
 import type { Point2D } from '@/types'
-import { A4_HEIGHT, A4_WIDTH } from '@/utils/coordinates'
 
 const EPSILON = 1e-6
 
@@ -24,12 +23,11 @@ interface EndpointResolution {
 	override?: Point2D
 }
 
-interface TrimOptions {
-	canvasWidth?: number
-	canvasHeight?: number
-}
-
-export function autoTrimLine(points: Point2D[], options: TrimOptions = {}): TrimmedRange {
+/**
+ * Auto-trim a line by finding the first and last self-intersection points.
+ * This creates a closed loop from the line by trimming the "tail" portions.
+ */
+export function autoTrimLine(points: Point2D[]): TrimmedRange {
 	const totalPoints = points.length
 	if (totalPoints <= 1) {
 		return {
@@ -39,11 +37,8 @@ export function autoTrimLine(points: Point2D[], options: TrimOptions = {}): Trim
 		}
 	}
 
-	const canvasWidth = options.canvasWidth ?? A4_WIDTH
-	const canvasHeight = options.canvasHeight ?? A4_HEIGHT
-
-	const startResolution = resolveStart(points, canvasWidth, canvasHeight)
-	const endResolution = resolveEnd(points, canvasWidth, canvasHeight, startResolution.index)
+	const startResolution = resolveStart(points)
+	const endResolution = resolveEnd(points, startResolution.index)
 
 	if (endResolution.index <= startResolution.index + 1) {
 		return {
@@ -68,14 +63,12 @@ export function autoTrimLine(points: Point2D[], options: TrimOptions = {}): Trim
 	}
 }
 
-function resolveStart(points: Point2D[], canvasWidth: number, canvasHeight: number): EndpointResolution {
+/**
+ * Find the first segment that intersects with a later segment.
+ */
+function resolveStart(points: Point2D[]): EndpointResolution {
 	const lastIndex = points.length - 1
 	for (let i = 0; i < lastIndex; i++) {
-		const candidate = points[i]
-		if (isOutside(candidate, canvasWidth, canvasHeight)) {
-			return { index: i }
-		}
-
 		const intersection = findForwardIntersection(points, i)
 		if (intersection) {
 			if (intersection.t <= EPSILON) {
@@ -88,26 +81,14 @@ function resolveStart(points: Point2D[], canvasWidth: number, canvasHeight: numb
 		}
 	}
 
-	const lastPoint = points[lastIndex]
-	if (isOutside(lastPoint, canvasWidth, canvasHeight)) {
-		return { index: lastIndex }
-	}
-
 	return { index: 0 }
 }
 
-function resolveEnd(
-	points: Point2D[],
-	canvasWidth: number,
-	canvasHeight: number,
-	startIndex: number,
-): EndpointResolution {
+/**
+ * Find the last segment that intersects with an earlier segment.
+ */
+function resolveEnd(points: Point2D[], startIndex: number): EndpointResolution {
 	for (let i = points.length - 1; i > Math.max(startIndex + 1, 0); i--) {
-		const candidate = points[i]
-		if (isOutside(candidate, canvasWidth, canvasHeight)) {
-			return { index: i + 1 }
-		}
-
 		const intersection = findBackwardIntersection(points, i)
 		if (intersection) {
 			if (intersection.t <= EPSILON) {
@@ -120,16 +101,7 @@ function resolveEnd(
 		}
 	}
 
-	const firstPoint = points[Math.max(startIndex, 0)]
-	if (firstPoint && isOutside(firstPoint, canvasWidth, canvasHeight)) {
-		return { index: Math.max(startIndex + 1, 1) }
-	}
-
 	return { index: points.length }
-}
-
-function isOutside(point: Point2D, width: number, height: number): boolean {
-	return point.x < 0 || point.x > width || point.y < 0 || point.y > height
 }
 
 function findForwardIntersection(points: Point2D[], startIndex: number): IntersectionResult | null {
