@@ -93,6 +93,12 @@
 				:canvas-offset="canvasOffset"
 				:is-animating="status === 'running' && mode === 'realtime'"
 			/>
+			<PendulumOverlay
+				v-if="status === 'running' && mode === 'realtime'"
+				:position3-d="current3DPosition"
+				:rope-length="currentRopeLength"
+				:bounds="bounds"
+			/>
 		</main>
 
 		<!-- Right Diagnostics -->
@@ -160,6 +166,7 @@ import SidebarSectionHeader from '@/components/controls/SidebarSectionHeader.vue
 import PaintCanvas from '@/components/canvas/PaintCanvas.vue'
 import TopDownView from '@/components/debug/TopDownView.vue'
 import SideView from '@/components/debug/SideView.vue'
+import PendulumOverlay from '@/components/debug/PendulumOverlay.vue'
 import RawDataDisplay from '@/components/debug/RawDataDisplay.vue'
 import RuntimeStats from '@/components/debug/RuntimeStats.vue'
 import NarrowScreenMessage from '@/components/NarrowScreenMessage.vue'
