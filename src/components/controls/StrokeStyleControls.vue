@@ -5,7 +5,7 @@
 			id="stroke-style"
 			:model-value="config.type"
 			:options="styleOptions"
-			label="Style"
+			label="Stroke Style"
 			:disabled="disabled"
 			@update:model-value="updateType"
 		/>

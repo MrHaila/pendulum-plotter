@@ -14,75 +14,63 @@
 		</div>
 
 		<!-- Mode Tabs -->
-		<div class="bg-base-200 dark:bg-base-700 rounded-lg p-1 flex gap-1">
-			<button
-				type="button"
-				:class="[
-					'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
-					mode === 'realtime'
-						? 'bg-base-0 text-base-900 shadow-sm dark:bg-linear-to-b from-accent-primary-300 to-accent-primary-500 dark:text-base-0 bg-accent-primary-300'
-						: 'text-base-700 dark:text-base-200 hover:bg-base-0/70 hover:text-base-900 hover:shadow-sm dark:hover:bg-base-600 dark:hover:text-base-100',
-					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
-				]"
-				:aria-pressed="mode === 'realtime'"
-				:disabled="status === 'running'"
-				@click="$emit('mode-change', 'realtime')"
-			>
-				Real-time
-			</button>
-			<button
-				type="button"
-				:class="[
-					'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
-					mode === 'instant'
-						? 'bg-base-0 text-base-900 shadow-sm dark:bg-linear-to-b from-accent-primary-300 to-accent-primary-500 dark:text-base-0 bg-accent-primary-300'
-						: 'text-base-700 dark:text-base-200 hover:bg-base-0/70 hover:text-base-900 hover:shadow-sm dark:hover:bg-base-600 dark:hover:text-base-100',
-					status === 'running' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
-				]"
-				:aria-pressed="mode === 'instant'"
-				:disabled="status === 'running'"
-				@click="$emit('mode-change', 'instant')"
-			>
-				Instant
-			</button>
-		</div>
+		<AppSegmentedToggle
+			:model-value="mode"
+			:options="modeOptions"
+			:disabled="status === 'running'"
+			@update:model-value="$emit('mode-change', $event as SimulationMode)"
+		/>
 
 		<!-- Instant Mode Controls -->
-		<div v-if="mode === 'instant'">
-			<label
-				for="iteration-count"
-				class="block text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400"
-				>Iteration Count</label
-			>
-			<input
-				id="iteration-count"
-				v-model.number="steps"
-				type="number"
-				min="100"
-				max="20000"
-				step="100"
-				:disabled="status === 'running'"
-				class="w-full px-2 py-2 mb-2 text-sm font-mono font-light bg-base-100 dark:bg-base-800 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md text-base-800 dark:text-base-100 focus:outline-none focus:ring-4 focus:ring-[rgba(255,209,149,0.08)] focus:border-accent-primary-500/90 disabled:bg-base-200 dark:disabled:bg-base-700 disabled:cursor-not-allowed transition-all duration-120"
-			/>
-			<AppButton
-				v-show="!hasContent"
-				class="w-full px-4 py-2"
-				variant="primary"
-				:disabled="status === 'running'"
-				@click="handleGenerate"
-			>
-				Run
-			</AppButton>
-			<!-- Clear Button for Instant Mode -->
-			<AppButton
-				v-show="hasContent"
-				class="w-full px-4 py-2"
-				variant="secondary"
-				:disabled="status === 'running'"
-				@click="$emit('reset')"
-			>
-				Clear Experiment
-			</AppButton>
+		<div v-if="mode === 'instant'" class="space-y-2">
+			<div>
+				<label
+					for="iteration-count"
+					class="block text-xs font-display font-light tracking-wider uppercase text-base-700 dark:text-base-400"
+					>Iteration Count</label
+				>
+				<input
+					id="iteration-count"
+					v-model.number="steps"
+					type="number"
+					min="100"
+					max="20000"
+					step="100"
+					:disabled="status === 'running'"
+					class="w-full px-2 py-2 text-sm font-mono font-light bg-base-100 dark:bg-base-800 border border-[#d7cbbf] dark:border-[rgba(255,210,160,0.06)] rounded-md text-base-800 dark:text-base-100 focus:outline-none focus:ring-4 focus:ring-[rgba(255,209,149,0.08)] focus:border-accent-primary-500/90 disabled:bg-base-200 dark:disabled:bg-base-700 disabled:cursor-not-allowed transition-all duration-120"
+				/>
+			</div>
+
+			<!-- Run/Clear + Auto Toggle Row -->
+			<div class="flex gap-2">
+				<AppButton
+					v-show="!hasContent"
+					class="flex-1 px-4 py-2"
+					variant="primary"
+					:disabled="status === 'running'"
+					@click="handleGenerate"
+				>
+					Run
+				</AppButton>
+				<AppButton
+					v-show="hasContent"
+					class="flex-1 px-4 py-2"
+					variant="secondary"
+					:disabled="status === 'running'"
+					@click="$emit('reset')"
+				>
+					Clear
+				</AppButton>
+
+				<!-- Manual/Auto Toggle -->
+				<AppSegmentedToggle
+					:model-value="autoSimulate ? 'auto' : 'manual'"
+					:options="autoSimulateOptions"
+					size="compact"
+					:disabled="status === 'running'"
+					@update:model-value="setAutoSimulate($event === 'auto')"
+				/>
+			</div>
 		</div>
 
 		<!-- Real-time Mode Controls -->
@@ -120,12 +108,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import AppButton from '@/components/common/AppButton.vue'
+import AppSegmentedToggle from '@/components/common/AppSegmentedToggle.vue'
 import type { SimulationMode, SimulationStatus } from '@/composables/useSimulation'
 import type { AppMode } from '@/types'
 
-defineProps<{
+const props = defineProps<{
 	mode: SimulationMode
 	status: SimulationStatus
 	hasContent: boolean
@@ -139,11 +128,38 @@ const emit = defineEmits<{
 	pause: []
 	resume: []
 	'mode-change': [mode: SimulationMode]
+	'auto-simulate-change': [enabled: boolean]
 }>()
 
 const steps = ref(5000)
+const autoSimulate = ref(false)
+
+const modeOptions = [
+	{ value: 'realtime', label: 'Real-time' },
+	{ value: 'instant', label: 'Instant' },
+]
+
+const autoSimulateOptions = [
+	{ value: 'manual', label: 'Manual' },
+	{ value: 'auto', label: 'Auto' },
+]
 
 const handleGenerate = () => {
 	emit('generate', steps.value)
 }
+
+const setAutoSimulate = (enabled: boolean) => {
+	autoSimulate.value = enabled
+	emit('auto-simulate-change', enabled)
+}
+
+// Watch steps - when changed in auto mode (instant mode only), emit generate
+watch(steps, () => {
+	if (autoSimulate.value && props.mode === 'instant' && props.status !== 'running') {
+		emit('generate', steps.value)
+	}
+})
+
+// Expose steps for App.vue to read
+defineExpose({ steps })
 </script>

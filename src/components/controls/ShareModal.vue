@@ -50,36 +50,7 @@
 								<!-- Mode Selection -->
 								<div class="space-y-3">
 									<SidebarSectionHeader label="Playback Mode" />
-									<div class="bg-base-200 dark:bg-base-700 rounded-lg p-1 flex gap-1">
-										<button
-											type="button"
-											:class="[
-												'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
-												shareMode === 'realtime'
-													? 'bg-base-0 text-base-900 shadow-sm dark:bg-linear-to-b from-accent-primary-300 to-accent-primary-500 dark:text-base-0 bg-accent-primary-300'
-													: 'text-base-500 dark:text-base-400 hover:bg-base-0/70 hover:text-base-900 hover:shadow-sm dark:hover:bg-base-600 dark:hover:text-base-100',
-												'cursor-pointer',
-											]"
-											:aria-pressed="shareMode === 'realtime'"
-											@click="shareMode = 'realtime'"
-										>
-											Real-time
-										</button>
-										<button
-											type="button"
-											:class="[
-												'flex-1 px-3 py-2 text-[11px] font-display tracking-[0.2em] uppercase rounded-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary-400',
-												shareMode === 'instant'
-													? 'bg-base-0 text-base-900 shadow-sm dark:bg-linear-to-b from-accent-primary-300 to-accent-primary-500 dark:text-base-0 bg-accent-primary-300'
-													: 'text-base-500 dark:text-base-400 hover:bg-base-0/70 hover:text-base-900 hover:shadow-sm dark:hover:bg-base-600 dark:hover:text-base-100',
-												'cursor-pointer',
-											]"
-											:aria-pressed="shareMode === 'instant'"
-											@click="shareMode = 'instant'"
-										>
-											Instant
-										</button>
-									</div>
+									<AppSegmentedToggle v-model="shareMode" :options="modeOptions" />
 								</div>
 
 								<!-- Parameters Summary -->
@@ -155,6 +126,7 @@ import type { SimulationMode } from '@/composables/useSimulation'
 import type { TrimOverrides } from '@/core/trimming'
 import { encodeShareLink, copyToClipboard, type ShareableState } from '@/utils/shareLink'
 import AppButton from '@/components/common/AppButton.vue'
+import AppSegmentedToggle from '@/components/common/AppSegmentedToggle.vue'
 import SidebarSectionHeader from '@/components/controls/SidebarSectionHeader.vue'
 
 const props = defineProps<{
@@ -175,6 +147,11 @@ const emit = defineEmits<{
 
 const shareMode = ref<SimulationMode>(props.mode)
 const copyButtonText = ref('Copy')
+
+const modeOptions = [
+	{ value: 'realtime', label: 'Real-time' },
+	{ value: 'instant', label: 'Instant' },
+]
 const linkInputRef = ref<HTMLInputElement>()
 const previewCanvasRef = ref<HTMLCanvasElement>()
 

@@ -24,6 +24,7 @@
 					<section class="space-y-3">
 						<SidebarSectionHeader label="Time Simulation" />
 						<ControlPanel
+							ref="controlPanelRef"
 							:mode="mode"
 							:status="status"
 							:has-content="pointCount > 0"
@@ -34,6 +35,7 @@
 							@pause="handlePause"
 							@resume="handleResume"
 							@mode-change="handleModeChange"
+							@auto-simulate-change="handleAutoSimulateChange"
 						/>
 					</section>
 
@@ -53,7 +55,7 @@
 
 					<!-- Stroke Style Section -->
 					<section class="space-y-3">
-						<SidebarSectionHeader label="Stroke Style" />
+						<SidebarSectionHeader label="Creative Flare" />
 						<StrokeStyleControls
 							:config="strokeStyle"
 							:disabled="status === 'running' || status === 'idle'"
@@ -241,6 +243,10 @@ const pointCount = computed(() => paintPoints.value.length)
 const showShareModal = ref(false)
 const instantSteps = ref(initialState.steps)
 
+// Control panel ref for accessing steps in auto mode
+const controlPanelRef = ref<InstanceType<typeof ControlPanel> | null>(null)
+const autoSimulate = ref(false)
+
 const hasPlaceholderBeenDismissed = ref(false)
 
 const showCanvasPlaceholder = computed(
@@ -351,9 +357,18 @@ const handleModeChange = (newMode: SimulationMode) => {
 	setMode(newMode)
 }
 
+const handleAutoSimulateChange = (enabled: boolean) => {
+	autoSimulate.value = enabled
+}
+
 const handleInitialConfigUpdate = (newConfig: Partial<SimulationConfig>) => {
 	updateInitialConfig(newConfig)
 	reset()
+
+	// Auto-run simulation if in auto mode and instant mode
+	if (autoSimulate.value && mode.value === 'instant' && controlPanelRef.value) {
+		runInstant(controlPanelRef.value.steps)
+	}
 }
 
 const handleTrimStartUpdate = (value: number) => {
