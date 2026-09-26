@@ -12,24 +12,24 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "vue": "^3.5.24"
+    "vue": "^3.5.43"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "@tailwindcss/vite": "^4.1.17",
-    "@tsconfig/node22": "^22.0.4",
-    "@types/node": "^24.10.1",
-    "@typescript-eslint/parser": "^8.46.4",
-    "@vitejs/plugin-vue": "^6.0.1",
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@tsconfig/node22": "^22.0.6",
+    "@types/node": "^26.6.3",
+    "@typescript-eslint/parser": "^8.70.1",
+    "@vitejs/plugin-vue": "^6.0.9",
     "@vue/eslint-config-prettier": "^10.2.0",
-    "@vue/eslint-config-typescript": "^14.6.0",
-    "@vue/tsconfig": "^0.8.1",
-    "eslint": "^9.39.1",
-    "eslint-plugin-vue": "^10.5.1",
-    "prettier": "^3.6.2",
-    "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3",
-    "vite": "^7.2.2",
-    "vue-tsc": "^3.1.4"
+    "@vue/eslint-config-typescript": "^14.9.0",
+    "@vue/tsconfig": "^0.9.1",
+    "eslint": "^10.11.0",
+    "eslint-plugin-vue": "^10.11.1",
+    "prettier": "^3.9.9",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.1",
+    "vue-tsc": "^3.3.11"
   }
 }

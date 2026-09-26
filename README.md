@@ -41,10 +41,10 @@ git clone https://github.com/MrHaila/pendulum-plotter.git
 cd pendulum-plotter
 
 # Install dependencies
-pnpm install
+bun install
 
 # Start development server
-pnpm dev
+bun dev
 ```
 
 Then open [http://localhost:5173](http://localhost:5173) in your browser.

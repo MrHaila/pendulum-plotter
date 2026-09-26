@@ -126,7 +126,7 @@ Each component card-style, independently iterable.
 - Real-time mode for visualization
 - Test physics calculations independently
 - Visual debugging components always visible during dev
-- **Always run `pnpm lint` and `pnpm typecheck` after making changes to verify work**
+- **Always run `bun run lint` and `bun run typecheck` after making changes to verify work** (package manager is bun; `bun.lock` is the lockfile. `vue-tsc` needs Node on PATH — under the bun runtime (`--bun`) it cannot resolve `.vue` imports)
 
 ## Testing Approach
 
