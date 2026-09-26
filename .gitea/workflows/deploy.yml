@@ -12,16 +12,17 @@ on:
     branches: [main]
   workflow_dispatch:
 
-env:
-  COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
-
 jobs:
   deploy:
     runs-on: homelab-sites
     steps:
       - uses: actions/checkout@v4
-      # No packageManager field in package.json, and the newest pnpm fails this
-      # build (ERR_PNPM_IGNORED_BUILDS on esbuild), so pin the major.
-      - run: corepack pnpm@10 install --frozen-lockfile
-      - run: corepack pnpm@10 run build
+      # The job image is plain node (no bun), so fetch the current bun release.
+      # no-cache: the runner's actions cache is disabled.
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+          no-cache: true
+      - run: bun install --frozen-lockfile
+      - run: bun run build
       - run: /opt/sitectl/sitectl release plotter dist
